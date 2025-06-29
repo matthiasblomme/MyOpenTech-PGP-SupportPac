@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MyOpenTech-PGP-SupportPac.iml" filepath="$PROJECT_DIR$/MyOpenTech-PGP-SupportPac.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/ACEv13/v2.0.1.0/PGPSupportPac/PGPSupportPac.iml" filepath="$PROJECT_DIR$/src/ACEv13/v2.0.1.0/PGPSupportPac/PGPSupportPac.iml" />
+      <module fileurl="file://$PROJECT_DIR$/src/ACEv13/v2.0.1.0/PGPSupportPacImpl/PGPSupportPacImpl.iml" filepath="$PROJECT_DIR$/src/ACEv13/v2.0.1.0/PGPSupportPacImpl/PGPSupportPacImpl.iml" />
     </modules>
   </component>
 </project>
