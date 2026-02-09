@@ -104,3 +104,30 @@ MQSeries.net public forum (http://www.mqseries.net/phpBB2/viewtopic.php?t=68728)
 
 <h4>Feedback</h4>
 You can provide your valuable feedback/suggestion to <b>dipakpal.opentech@gmail.com</b>
+
+## ⚠️ Java 17 Upgrade Notice
+
+**This project has been upgraded to Java 17 for IBM ACE v13.0.6.0**
+
+### Quick Start for Java 17
+
+1. **Download Bouncy Castle Libraries:**
+   ```bash
+   # Windows (PowerShell or CMD)
+   download-bouncy-castle-libs.bat
+   ```
+
+2. **Build the Project:**
+   ```bash
+   # Windows
+   build-java17.bat
+   ```
+
+3. **For detailed upgrade information, see [JAVA17_UPGRADE_NOTES.md](JAVA17_UPGRADE_NOTES.md)**
+
+### Requirements
+- IBM ACE v13.0.6.0 or later
+- Java 17 (included with IBM ACE)
+- Bouncy Castle 1.78.1 libraries (jdk18on)
+
+---

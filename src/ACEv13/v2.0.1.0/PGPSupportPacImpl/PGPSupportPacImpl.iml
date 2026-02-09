@@ -6,20 +6,19 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="17" jdkType="JavaSDK" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../../../Program Files/IBM/ACE/13.0.4.0/common/classes/IntegrationAPI.jar!/" />
+          <root url="jar://C:/Program Files/IBM/ACE/13.0.6.0/common/classes/IntegrationAPI.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../../../../../Program Files/IBM/ACE/13.0.4.0/server/classes/jplugin2.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../../../../../../Program Files/IBM/ACE/13.0.4.0/server/classes/jplugin2.jar!/" />
+          <root url="jar://C:/Program Files/IBM/ACE/13.0.6.0/server/classes/jplugin2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
