@@ -103,7 +103,7 @@ echo Creating PGPSupportPacImpl.jar...
 cd build\PGPSupportPacImpl
 "%JAVA_HOME%\bin\jar.exe" cvfm PGPSupportPacImpl.jar ^
     ..\..\src\ACEv13\v2.0.1.0\PGPSupportPacImpl\META-INF\MANIFEST.MF ^
-    .
+    com pgpkeytool.class
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: Failed to create PGPSupportPacImpl.jar
     cd ..\..
@@ -122,12 +122,15 @@ REM Create PGPSupportPac.jar (Plugin)
 echo Creating PGPSupportPac.jar...
 cd src\ACEv13\v2.0.1.0\PGPSupportPac
 
-REM Copy compiled classes
-xcopy /E /I /Y ..\..\..\..\build\PGPSupportPac\com com\ >nul
+REM Copy compiled classes to com directory (merge with existing .msgnode and .properties files)
+xcopy /E /Y ..\..\..\..\build\PGPSupportPac\com\ibm\broker\supportpac\pgp\*.class com\ibm\broker\supportpac\pgp\ >nul
+
+REM The .msgnode and .properties files are already in the com directory from source
+REM Now create the JAR with everything
 
 "%JAVA_HOME%\bin\jar.exe" cvfm PGPSupportPac.jar ^
     META-INF\MANIFEST.MF ^
-    com\ icons\ *.xml *.properties *.xmi
+    com\ icons\ generated\ *.xml *.properties *.xmi .udnmetadata
 
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: Failed to create PGPSupportPac.jar
