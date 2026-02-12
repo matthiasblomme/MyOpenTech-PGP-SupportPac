@@ -55,17 +55,19 @@ set "IMPL_SRC=src\ACEv13\v2.0.1.0\PGPSupportPacImpl\src"
 set "IMPL_OUT=build\PGPSupportPacImpl"
 set "IMPL_CP=%BC_LIB_DIR%\*;%ACE_HOME%\common\classes\IntegrationAPI.jar;%ACE_HOME%\server\classes\jplugin2.jar"
 
-"%JAVA_HOME%\bin\javac.exe" -cp "%IMPL_CP%" -d "%IMPL_OUT%" -encoding UTF-8 ^
-    "%IMPL_SRC%\pgpkeytool.java" ^
-    "%IMPL_SRC%\com\ibm\broker\supportpac\pgp\*.java" ^
-    "%IMPL_SRC%\com\ibm\broker\supportpac\pgp\impl\*.java"
+REM Find all Java files
+dir /s /b "%IMPL_SRC%\*.java" > build\impl_sources.txt
+
+"%JAVA_HOME%\bin\javac.exe" -cp "%IMPL_CP%" -d "%IMPL_OUT%" -encoding UTF-8 @build\impl_sources.txt
 
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: Compilation of PGPSupportPacImpl failed.
+    del build\impl_sources.txt
     pause
     exit /b 1
 )
 echo PGPSupportPacImpl compiled successfully.
+del build\impl_sources.txt
 echo.
 
 REM Compile PGPSupportPac
@@ -76,15 +78,19 @@ set "PLUGIN_SRC=src\ACEv13\v2.0.1.0\PGPSupportPac\src"
 set "PLUGIN_OUT=build\PGPSupportPac"
 set "PLUGIN_CP=%ACE_HOME%\common\classes\IntegrationAPI.jar"
 
-"%JAVA_HOME%\bin\javac.exe" -cp "%PLUGIN_CP%" -d "%PLUGIN_OUT%" -encoding UTF-8 ^
-    "%PLUGIN_SRC%\com\ibm\broker\supportpac\pgp\*.java"
+REM Find all Java files
+dir /s /b "%PLUGIN_SRC%\*.java" > build\plugin_sources.txt
+
+"%JAVA_HOME%\bin\javac.exe" -cp "%PLUGIN_CP%" -d "%PLUGIN_OUT%" -encoding UTF-8 @build\plugin_sources.txt
 
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: Compilation of PGPSupportPac failed.
+    del build\plugin_sources.txt
     pause
     exit /b 1
 )
 echo PGPSupportPac compiled successfully.
+del build\plugin_sources.txt
 echo.
 
 REM Create JAR files
@@ -97,7 +103,7 @@ echo Creating PGPSupportPacImpl.jar...
 cd build\PGPSupportPacImpl
 "%JAVA_HOME%\bin\jar.exe" cvfm PGPSupportPacImpl.jar ^
     ..\..\src\ACEv13\v2.0.1.0\PGPSupportPacImpl\META-INF\MANIFEST.MF ^
-    .
+    com pgpkeytool.class
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: Failed to create PGPSupportPacImpl.jar
     cd ..\..
@@ -116,22 +122,27 @@ REM Create PGPSupportPac.jar (Plugin)
 echo Creating PGPSupportPac.jar...
 cd src\ACEv13\v2.0.1.0\PGPSupportPac
 
-REM Copy compiled classes
-xcopy /E /I /Y ..\..\..\..\build\PGPSupportPac\com com\
+REM Copy compiled classes to com directory (merge with existing .msgnode and .properties files)
+xcopy /E /Y ..\..\..\..\build\PGPSupportPac\com\ibm\broker\supportpac\pgp\*.class com\ibm\broker\supportpac\pgp\ >nul
+
+REM The .msgnode and .properties files are already in the com directory from source
+REM Now create the JAR with everything (includes .class, .msgnode, and .properties files)
 
 "%JAVA_HOME%\bin\jar.exe" cvfm PGPSupportPac.jar ^
     META-INF\MANIFEST.MF ^
-    com\ icons\ *.xml *.properties *.xmi
+    com\ icons\ generated\ *.xml *.properties *.xmi .udnmetadata
 
 if %ERRORLEVEL% NEQ 0 (
     echo ERROR: Failed to create PGPSupportPac.jar
+    REM Clean up only the copied .class files
+    del /Q com\ibm\broker\supportpac\pgp\*.class 2>nul
     cd ..\..\..\..\
     pause
     exit /b 1
 )
 
-REM Clean up copied classes
-rmdir /S /Q com
+REM Clean up only the copied .class files (keep .msgnode and .properties)
+del /Q com\ibm\broker\supportpac\pgp\*.class 2>nul
 
 cd ..\..\..\..\
 

@@ -52,7 +52,7 @@ PGP SupportPac provides application-layer security for IBM App Connect Enterpris
 3. **Build the project:**
    ```bash
    # Windows
-   build-java17-fixed.bat
+   build.bat
    ```
 
 4. **Output location:**
