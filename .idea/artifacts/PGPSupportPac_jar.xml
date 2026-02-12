@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PGPSupportPac:jar">
+    <output-path>$PROJECT_DIR$/binary/ACEv13/plugins</output-path>
+    <root id="archive" name="PGPSupportPac.jar">
+      <element id="module-output" name="PGPSupportPac" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/ACEv13/v2.0.1.0/PGPSupportPac/build.properties" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/ACEv13/v2.0.1.0/PGPSupportPac/HelpContexts.xml" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/ACEv13/v2.0.1.0/PGPSupportPac/palette.properties" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/ACEv13/v2.0.1.0/PGPSupportPac/palette.xmi" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/ACEv13/v2.0.1.0/PGPSupportPac/plugin.xml" />
+      <element id="directory" name="icons.full">
+        <element id="dir-copy" path="$PROJECT_DIR$/src/ACEv13/v2.0.1.0/PGPSupportPac/icons/full" />
+      </element>
+    </root>
+  </artifact>
+</component>

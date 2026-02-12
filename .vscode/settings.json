@@ -1,0 +1,19 @@
+{
+    "java.project.sourcePaths": [
+        "src/ACEv13/v2.0.1.0/PGPSupportPac/src",
+        "src/ACEv13/v2.0.1.0/PGPSupportPacImpl/src"
+    ],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "src/ACEv13/v2.0.1.0/PGPSupportPacImpl/lib/**/*.jar",
+        "binary/ACEv13/lib/**/*.jar"
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.compile.nullAnalysis.mode": "automatic",
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    }
+}

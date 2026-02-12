@@ -3,6 +3,20 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$" />
+    <orderEntry type="jdk" jdkName="ibm-17" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="PGPSupportPac" level="project" />
+    <orderEntry type="library" name="PGPSupportPacImpl" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/binary/ACEv13/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/binary/ACEv13/lib" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="PGPSupportPac_v12" level="project" />
   </component>
 </module>

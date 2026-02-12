@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="PGPSupportPacImpl">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/binary/ACEv13/lib/PGPSupportPacImpl.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

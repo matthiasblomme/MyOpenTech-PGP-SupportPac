@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PGPSupportPacImpl:jar">
+    <output-path>$PROJECT_DIR$/binary/ACEv13/lib</output-path>
+    <root id="archive" name="PGPSupportPacImpl.jar">
+      <element id="module-output" name="PGPSupportPacImpl" />
+      <element id="directory" name="META-INF" />
+    </root>
+  </artifact>
+</component>
