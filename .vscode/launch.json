@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch PGP Command Line Encrypter",
+            "request": "launch",
+            "mainClass": "com.ibm.broker.supportpac.pgp.PGPCommandLineEncrypter",
+            "projectName": "PGPSupportPacImpl"
+        },
+        {
+            "type": "java",
+            "name": "Launch PGP Command Line Decrypter",
+            "request": "launch",
+            "mainClass": "com.ibm.broker.supportpac.pgp.PGPCommandLineDecrypter",
+            "projectName": "PGPSupportPacImpl"
+        }
+    ]
+}
