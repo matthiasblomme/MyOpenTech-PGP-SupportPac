@@ -1,133 +1,314 @@
-MyOpenTech (PGP SupportPac v1.0.0.1)
-======================================================
+# PGP SupportPac for IBM App Connect Enterprise (ACE)
 
-<h2>PGP SupportPac for IBM Integration Bus</h2>
-======================================================
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![Java 17](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.org/projects/jdk/17/)
+[![IBM ACE](https://img.shields.io/badge/IBM%20ACE-13.0.6.0+-blue.svg)](https://www.ibm.com/products/app-connect)
 
-<h4>Security facilities offered by IBM Integration Bus</h4>
-Security facilities in IBM Integration Bus are typically based on<br>
+> **⚠️ SOURCE CODE REPOSITORY**  
+> This repository contains the **source code** for the PGP SupportPac.  
+> For **pre-built JAR files, installation guides, and test documentation**, visit:  
+> 📦 **[PGP-SupportPac-for-IBM-ACE-V12](https://github.com/matthiasblomme/PGP-SupportPac-for-IBM-ACE-V12)**
 
-1. Websphere MQ security.<br>
-2. Transport layer security (e.g. SSL/TLS) provided by underlying transport mechanism.<br>
-3. Access Controls (e.g. Authentication and Authorization) mechanism powered by internal (broker’s security manager) and external security providers (e.g. WS-Trust v1.3 compliant security token servers, Tivoli Federated Identity Manager, Lightweight Directory Access Protocol)<br>
-4. WS-Security for Web Services using SOAP nodes.<br>
+---
 
+## 📋 Overview
 
-<h4>Limitation in security features offered by IBM Integration Bus</h4>
+PGP SupportPac provides application-layer security for IBM App Connect Enterprise (ACE), implementing PGP cryptographic solutions for data confidentiality, integrity, and optional compression. This SupportPac extends IBM ACE with custom nodes for PGP encryption, decryption, and signature operations.
 
-1. Webservice technology is not considered as a preferred solution in today’s enterprise integration world for asynchronous and one-way data communication especially while dealing with large volume of data communication and data transfer in batch mode. In this scenario WS-Security standard can not be applied.<br>
-2. Use of SSL at transport layer slows down overall transfer rate as it encrypts the entire traffic. Use of SSL can be eliminated while transferring data over trusted network (e.g. Intranet) by encrypting only sensitive and confidential information at application layer itself.<br>
-3. External applications (e.g. third party vendors, customers, government agencies) often ask for data encryption before transferring to/from them, even if SSL is used at transport layer.<br>
-4. Apart from WS-Security standard (which is applicable for Webservices only), IBM Integration Bus does not provide any in-built solution for data security enforcing data confidentiality (Encryption) and integrity (Digital Signature).<br>
-5. Many organizations use various third party softwares/tools for implementing data security. But those third party softwares/tools are completely decoupled from IBM Integration Bus.<br>
-6. Why to use such third party softwares/tools at Integration Layer if IBM Integration Bus provides a solution.
+### Key Features
 
-<h4>Solution (PGP)</h4>
+✅ **PGP Encrypter/Decrypter Nodes** - Easily pluggable into IBM ACE Toolkit  
+✅ **Key Management Tool** - Command-line tool (`pgpkeytool`) for key generation and repository management  
+✅ **Centralized Configuration** - UserDefined Configurable Service for key repositories and default parameters  
+✅ **Flexible Operations** - Support for both message and file encryption/decryption  
+✅ **Wide Algorithm Support** - Multiple hash, cipher, and compression algorithms  
+✅ **Java 17 Modernized** - Updated for IBM ACE v13.0.6.0+ with modern Java features
 
-1. Solution to the above stated problems requires implementing a strong industry standard cryptographic solution to enforce data confidentiality and integrity with an optional data compression feature.<br>
-2. PGP (Pretty Good Privacy) is a widely used cryptographic solution for data communication. It was created by Phil Zimmermann in 1991. PGP follows the OpenPGP standard (RFC 4880) for encrypting and decrypting data. Besides data confidentiality and integrity, PGP also supports data compression.<br>
-3. PGP SupportPac (version 1.0.0.1) for IBM Integration Bus v9 implements PGP cryptographic solution providing encryption, decryption, and signature functionalities as an extended feature (SupportPac) of IBM Integration Bus product.<br>
-4. This SupportPac leverages Bouncy Castle PGP Java libraries for core PGP functionalities. Bouncy Castle is a Java based open source (MIT License: https://www.bouncycastle.org/licence.html) solution for PGP implementation.<br>
+---
 
+## 🚀 Quick Start
 
-<h3>PGP SupportPac Features<h3>
-===============================================================
-<h4>Easily pluggable to IBM Integration Bus Toolkit</h4>
+### Prerequisites
 
-Once PGP SupportPac plugins is applied to the IBM Integration Bus Toolkit, PGP Encrypter/Decrypter nodes will be available in the PGP drawer of the message flow node palette.
+- **IBM ACE v13.0.6.0 or later**
+- **Java 17** (included with IBM ACE)
+- **Bouncy Castle 1.78.1** libraries (jdk18on)
 
-<h4>Easy Runtime Installation</h4>
+### Building from Source
 
-It requires standard UserDefined Node installation process. SupportPac ships with following runtime libraries (.jar files) which needs to be placed at Broker's User Lil Path.<br><br>
-<b>
-bcpg-jdk15on-149.jar<br>
-bcprov-ext-jdk15on-149.jar<br>
-com.ibm.broker.supportpac.PGP.jar<br>
-</b>
+1. **Clone this repository:**
+   ```bash
+   git clone https://github.com/matthiasblomme/MyOpenTech-PGP-SupportPac.git
+   cd MyOpenTech-PGP-SupportPac
+   ```
 
-
-<h4>PGP key pair generation and key/repository management</h4>
-
-This SupportPac ships with a Java based command-line tool (pgpkeytool) for PGP key generation and key/repository management. You do not need any third-party open source or commercial tool for PGP key/repository management.
-
-
-<h4>Centralized key repository and some default parameters configuration through UserDefined Configurable Service</h4>
-
-1. You do not need to specify private/public key repository details, default sign key and passphrase, decryption key passphrase information at each PGP Encrypter/Decrypter node used in the messageflow.<br>
-2. Just create a UserDefined Configurable Service for all (or a group of messageflows) and specify the service name at node properties.<br>
-3. In general just one Configurable Service is sufficient for all the messageflows deployed in a Broker.<br>
-
-
-<h4>PGP Encrypter Node</h4>
-
-1. Provides PGP signature generation (optional) and encryption functionalities.<br>
-2. Supports both Message and File encryption regardless of transport protocol or message domain.<br>
-3. Node can be configured to write encrypted data into Output Message Tree or File System directly.<br>
-4. In case of File encryption, Input file can be deleted or archived (with or without timestamp suffix) after successful encryption process.<br>
-5. Some node properties can be overridden at node's input local environment during runtime. Node properties overridden at input local environment are applicable at current invocation of the messageflow only.<br>
-6. Node reads PGP private/public keys and default signature key/passphrase information configured at UserDefined Configurable Service.<br>
-7. Key information can be provided as either Key User Id (e.g. Sender <sender-pgp-keys@ibm.com>) or Hexadecimal Key Id (e.g. 0x73E56D78)<br>
-8. Supports wide range of required algorithms.<br>
-Hash (Digest) Algorithms: MD5, SHA1, RIPEMD160, MD2, SHA256, SHA384, SHA512, SHA224<br>
-Cipher Algorithms: IDEA, TRIPLE_DES, CAST5, BLOWFISH, DES, AES_128, AES_192, AES_256, TWOFISH<br>
-Compression Algorithms: UNCOMPRESSED, ZIP, ZLIB, BZIP2<br>
-
-
-<h4>PGP Decrypter Node</h4>
-
-1. Provides PGP signature validation (optional) and decryption functionalities.<br>
-2. Supports both Message and File decryption.<br>
-3. Node can be configured to write decrypted data into Output Message Tree or File System directly.<br>
-4. In case of File decryption, Input file can be deleted or archived (with or without timestamp suffix) after successful decryption process.<br>
-5. Some node properties can be overridden at node's input local environment during runtime. Node properties overridden at input local environment are applicable at current invocation of the messageflow only.<br>
-6. Node reads PGP private/public keys and default decryption key passphrase information configured at UserDefined Configurable Service.
-
-
-<h4>Conclusion</h4>
-
-1. This SupportPac provides application-layer security enforcing data confidentiality and integrity powered by PGP cryptographic solution.<br>
-2. Current version (v1.0.0.1) of this SupportPac only supports signature generation/validation integrated with encryption/decryption process.<br>
-3. Future version will provide isolated signature generation/validation functionalities.<br>
-4. Future version will provide better GUI at node properties view.<br>
-5. Future version of pgpkeytool will be powered by user-friendly GUI similar to IBM Key Management tool shipped with Websphere MQ.<br>
-
-
-<h4>Resources</h4>
-
-1. PGP SupportPac binary, source code, documents, samples and other artifacts are available at GitHub (https://github.com/dipakpal/MyOpenTech-PGP-SupportPac)
-
-2. Do you have any question ? Just put your question(s) at following IBM developerWorks
-public community forum (https://www.ibm.com/developerworks/community/groups/community/pgpsupportpaciib)
-or
-MQSeries.net public forum (http://www.mqseries.net/phpBB2/viewtopic.php?t=68728)
-
-
-<h4>Feedback</h4>
-You can provide your valuable feedback/suggestion to <b>dipakpal.opentech@gmail.com</b>
-
-## ⚠️ Java 17 Upgrade Notice
-
-**This project has been upgraded to Java 17 for IBM ACE v13.0.6.0**
-
-### Quick Start for Java 17
-
-1. **Download Bouncy Castle Libraries:**
+2. **Download Bouncy Castle libraries:**
    ```bash
    # Windows (PowerShell or CMD)
+   cd build_scripts
    download-bouncy-castle-libs.bat
    ```
 
-2. **Build the Project:**
+3. **Build the project:**
    ```bash
    # Windows
-   build-java17.bat
+   build-java17-fixed.bat
    ```
 
-3. **For detailed upgrade information, see [JAVA17_UPGRADE_NOTES.md](JAVA17_UPGRADE_NOTES.md)**
+4. **Output location:**
+   - Plugin JAR: `binary/ACEv13/plugins/PGPSupportPac.jar`
+   - Implementation JAR: `binary/ACEv13/lib/PGPSupportPacImpl.jar`
 
-### Requirements
-- IBM ACE v13.0.6.0 or later
-- Java 17 (included with IBM ACE)
-- Bouncy Castle 1.78.1 libraries (jdk18on)
+### Installation & Usage
+
+For installation instructions, configuration guides, and examples, see:  
+📦 **[PGP-SupportPac-for-IBM-ACE-V12](https://github.com/matthiasblomme/PGP-SupportPac-for-IBM-ACE-V12)**
 
 ---
+
+## 📚 Documentation
+
+### In This Repository (Source Code)
+
+- **[JAVA17_UPGRADE_NOTES.md](JAVA17_UPGRADE_NOTES.md)** - Java 17 upgrade details and changes
+- **[JAVA17_MODERNIZATION_ANALYSIS.md](JAVA17_MODERNIZATION_ANALYSIS.md)** - Detailed code analysis and modernization opportunities
+- **[COMPREHENSIVE_MODERNIZATION_PLAN.md](COMPREHENSIVE_MODERNIZATION_PLAN.md)** - 16-week implementation roadmap
+- **[IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md)** - Visual timeline and Gantt charts
+
+### In Binary Repository (Installation & Usage)
+
+Visit **[PGP-SupportPac-for-IBM-ACE-V12](https://github.com/matthiasblomme/PGP-SupportPac-for-IBM-ACE-V12)** for:
+- Installation guides
+- Configuration examples
+- Test documentation
+- Sample message flows
+- Pre-built JAR files
+
+---
+
+## 🔐 Security Features
+
+### Why PGP for IBM ACE?
+
+IBM ACE provides security through:
+- WebSphere MQ security
+- Transport layer security (SSL/TLS)
+- Access controls and authentication
+- WS-Security for web services
+
+**However**, these solutions have limitations:
+- WS-Security only applies to web services
+- SSL encrypts entire traffic (performance overhead)
+- No built-in application-layer encryption for batch/async data
+- External applications often require data encryption regardless of transport security
+
+**PGP SupportPac solves these by providing:**
+- Application-layer encryption/decryption
+- Digital signatures for data integrity
+- Optional data compression
+- Industry-standard OpenPGP (RFC 4880) compliance
+- Integration directly within ACE message flows
+
+---
+
+## 🛠️ Technical Details
+
+### Supported Algorithms
+
+**Hash (Digest) Algorithms:**
+- MD5, SHA1, RIPEMD160, MD2
+- SHA256, SHA384, SHA512, SHA224
+
+**Cipher Algorithms:**
+- IDEA, TRIPLE_DES, CAST5, BLOWFISH, DES
+- AES_128, AES_192, AES_256, TWOFISH
+
+**Compression Algorithms:**
+- UNCOMPRESSED, ZIP, ZLIB, BZIP2
+
+### Architecture
+
+```
+PGP SupportPac
+├── PGPSupportPac (Plugin)
+│   ├── PGPEncrypterNodeUDN.java
+│   └── PGPDecrypterNodeUDN.java
+└── PGPSupportPacImpl (Implementation)
+    ├── PGPEncrypter.java
+    ├── PGPDecrypter.java
+    ├── PGPKeyGen.java
+    ├── PGPKeyUtil.java
+    └── pgpkeytool (CLI)
+```
+
+### Dependencies
+
+- **Bouncy Castle PGP** (bcpg-jdk18on-1.78.1.jar)
+- **Bouncy Castle Provider** (bcprov-jdk18on-1.78.1.jar)
+- **IBM ACE Runtime** (v13.0.6.0+)
+
+---
+
+## 🔄 Java 17 Modernization
+
+This project has been upgraded to Java 17 with modern features:
+
+### Implemented
+- ✅ Try-with-resources for resource management
+- ✅ Modern collection types (replacing Vector)
+- ✅ Updated Bouncy Castle libraries (1.78.1)
+- ✅ Improved error handling
+
+### Planned (See [COMPREHENSIVE_MODERNIZATION_PLAN.md](COMPREHENSIVE_MODERNIZATION_PLAN.md))
+- 🔄 Switch expressions (JEP 361)
+- 🔄 Text blocks (JEP 378)
+- 🔄 Pattern matching instanceof (JEP 394)
+- 🔄 Records for data classes (JEP 395)
+- 🔄 Sealed classes (JEP 409)
+- 🔄 Stream API refactoring
+- 🔄 Performance optimizations
+
+---
+
+## 📦 Repository Structure
+
+```
+MyOpenTech-PGP-SupportPac/
+├── src/ACEv13/v2.0.1.0/          # Source code
+│   ├── PGPSupportPac/            # Plugin source
+│   └── PGPSupportPacImpl/        # Implementation source
+├── binary/ACEv13/                # Build output
+│   ├── plugins/                  # Plugin JAR
+│   └── lib/                      # Implementation JARs
+├── build_scripts/                # Build automation
+├── JAVA17_*.md                   # Java 17 documentation
+├── COMPREHENSIVE_*.md            # Planning documents
+└── README.md                     # This file
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! This project is licensed under **LGPL-3.0**, which means:
+
+✅ **You can:**
+- Use in production (including commercial)
+- Modify the code
+- Distribute modified versions
+
+📋 **You must:**
+- Share modifications with the community (via pull request or public repository)
+- Document your changes
+- Maintain this license and attribution
+
+### How to Contribute
+
+1. Fork this repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Commit with clear messages (`git commit -m 'Add amazing feature'`)
+5. Push to your branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
+
+**See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines** *(coming soon)*
+
+---
+
+## 📄 License
+
+This project is licensed under the **GNU Lesser General Public License v3.0 (LGPL-3.0)**.
+
+### What This Means
+
+✅ **Free to Use:**
+- Use in production environments (including commercial)
+- No licensing fees or usage restrictions
+
+✅ **Modification Requirements:**
+If you modify this software, you **must**:
+1. Share your modifications with the community
+2. Document your changes
+3. Maintain this license and attribution
+
+✅ **Integration Friendly:**
+- Can be used with proprietary ACE applications
+- Only modifications to the PGP SupportPac itself must be shared
+- Your ACE flows and applications remain yours
+
+### Why LGPL-3.0?
+
+This license ensures:
+- The community benefits from improvements
+- Free production use for everyone
+- Continued open-source development
+
+**See [LICENSE](LICENSE) file for complete terms.**
+
+---
+
+## 🔗 Related Resources
+
+### Repositories
+- 📦 **[Binary & Documentation Repository](https://github.com/matthiasblomme/PGP-SupportPac-for-IBM-ACE-V12)** - Pre-built JARs and installation guides
+- 💻 **[This Repository](https://github.com/matthiasblomme/MyOpenTech-PGP-SupportPac)** - Source code
+
+### External Links
+- [Bouncy Castle](https://www.bouncycastle.org/) - Cryptographic library
+- [OpenPGP Standard (RFC 4880)](https://www.rfc-editor.org/rfc/rfc4880)
+- [IBM App Connect Enterprise](https://www.ibm.com/products/app-connect)
+
+### Community
+- [IBM developerWorks Forum](https://www.ibm.com/developerworks/community/groups/community/pgpsupportpaciib)
+- [MQSeries.net Forum](http://www.mqseries.net/phpBB2/viewtopic.php?t=68728)
+
+---
+
+## 👥 Credits
+
+### Original Author
+- **Dipak Pal** - Original PGP SupportPac creator
+
+### Current Maintainer
+- **Matthias Blomme** - Java 17 modernization and ongoing maintenance
+
+### Contributors
+See [CONTRIBUTORS.md](CONTRIBUTORS.md) for a list of contributors *(coming soon)*
+
+---
+
+## 📧 Contact & Support
+
+### Questions or Issues?
+- Open an issue in this repository
+- Visit the community forums (links above)
+
+### Feedback & Suggestions
+- Email: **dipakpal.opentech@gmail.com** (original author)
+- Create a GitHub issue for feature requests
+
+---
+
+## 🎯 Roadmap
+
+See [COMPREHENSIVE_MODERNIZATION_PLAN.md](COMPREHENSIVE_MODERNIZATION_PLAN.md) for the complete 16-week modernization roadmap, including:
+
+- **Phase 1-2 (Weeks 1-4):** Critical updates and code modernization
+- **Phase 3-4 (Weeks 5-8):** Performance optimization and advanced features
+- **Phase 5-6 (Weeks 9-12):** Extended PGP operations and integrations
+- **Phase 7-8 (Weeks 13-16):** Testing, documentation, and release
+
+---
+
+## ⭐ Show Your Support
+
+If you find this project useful, please consider:
+- ⭐ Starring this repository
+- 🐛 Reporting bugs or issues
+- 💡 Suggesting new features
+- 🤝 Contributing code improvements
+- 📢 Sharing with the ACE community
+
+---
+
+**Made with ❤️ for the IBM App Connect Enterprise community**
