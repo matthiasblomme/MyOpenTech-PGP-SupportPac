@@ -139,13 +139,10 @@ public class PGPRSAKeyGen {
 
 		KeyPair kp = kpg.generateKeyPair();
 
-		FileOutputStream out1 = new FileOutputStream(secretKeyFile);
-		FileOutputStream out2 = new FileOutputStream(publicKeyFile);
-
-		exportKeyPair(out1, out2, kp.getPublic(), kp.getPrivate(), identity, passPhrase.toCharArray(), Boolean.parseBoolean(asciiArmor), cipher);
-
-		out1.close();
-		out2.close();
+		try (FileOutputStream out1 = new FileOutputStream(secretKeyFile);
+		     FileOutputStream out2 = new FileOutputStream(publicKeyFile)) {
+			exportKeyPair(out1, out2, kp.getPublic(), kp.getPrivate(), identity, passPhrase.toCharArray(), Boolean.parseBoolean(asciiArmor), cipher);
+		}
 
 		System.out.println("******************* PGP Private Key **********************\n");
 		System.out.println(new String(PGPJavaUtil.readFile(secretKeyFile)));

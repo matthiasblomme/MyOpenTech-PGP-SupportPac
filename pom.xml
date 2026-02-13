@@ -20,8 +20,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+        <!-- IBM ACE Installation Path -->
+        <ace.home>C:\Program Files\IBM\ACE\13.0.6.0</ace.home>
+
         <!-- Bouncy Castle Version -->
-        <bouncycastle.version>1.78.1</bouncycastle.version>
+        <bouncycastle.version>1.81</bouncycastle.version>
 
         <!-- Plugin Versions - Compatible with Maven 3.5.2 -->
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>

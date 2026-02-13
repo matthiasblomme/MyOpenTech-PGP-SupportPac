@@ -226,9 +226,9 @@ public class PGPJavaUtil {
 			dataFile = dataFile + ".asc";
 		}
 
-		FileOutputStream fos = new FileOutputStream(new File(dataFile));
-		fos.write(data);
-		fos.close();
+		try (FileOutputStream fos = new FileOutputStream(new File(dataFile))) {
+			fos.write(data);
+		}
 
 		return dataFile;
 	}
@@ -241,20 +241,18 @@ public class PGPJavaUtil {
 	 * @throws Exception
 	 */
 	public static void writeFile(byte[] data, String fileName, boolean asciiAromor) throws Exception {
-
-        File outFile = new File(fileName);
-        FileOutputStream fout = new FileOutputStream(outFile);
-        
-        if(asciiAromor){
-        	OutputStream ostream = new ArmoredOutputStream(fout);
-            ostream.write(data);
-            ostream.close();
-        } else {
-        	fout.write(data);
-        }
-        
-        fout.close();
-    }
+	       File outFile = new File(fileName);
+	       
+	       try (FileOutputStream fout = new FileOutputStream(outFile)) {
+	           if(asciiAromor){
+	               try (OutputStream ostream = new ArmoredOutputStream(fout)) {
+	                   ostream.write(data);
+	               }
+	           } else {
+	               fout.write(data);
+	           }
+	       }
+	   }
 	
 	/**
 	 * Encode data as ASCII armored
@@ -283,13 +281,9 @@ public class PGPJavaUtil {
 	 * @throws Exception
 	 */
 	public static byte[] readFile(String file) throws Exception {
-
-		FileInputStream fis = new FileInputStream(new File(file));
-		byte[] data = new byte[fis.available()];
-		fis.read(data);
-		fis.close();
-
-		return data;
+		try (FileInputStream fis = new FileInputStream(new File(file))) {
+			return fis.readAllBytes();
+		}
 	}
 
 	/**

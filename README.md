@@ -32,9 +32,13 @@ PGP SupportPac provides application-layer security for IBM App Connect Enterpris
 
 - **IBM ACE v13.0.6.0 or later**
 - **Java 17** (included with IBM ACE)
-- **Bouncy Castle 1.78.1** libraries (jdk18on)
+- **Bouncy Castle 1.81** libraries (jdk18on)
 
 ### Building from Source
+
+#### Option 1: Standard Build (Recommended)
+
+Use the standard build script for most development environments:
 
 1. **Clone this repository:**
    ```bash
@@ -58,6 +62,26 @@ PGP SupportPac provides application-layer security for IBM App Connect Enterpris
 4. **Output location:**
    - Plugin JAR: `binary/ACEv13/plugins/PGPSupportPac.jar`
    - Implementation JAR: `binary/ACEv13/lib/PGPSupportPacImpl.jar`
+
+#### Option 2: Maven Build (ACE Toolkit Only)
+
+> **⚠️ Note:** Maven build requires Eclipse OSGi dependencies that are only available in the IBM ACE Toolkit environment. For other build environments, use the standard build script above.
+
+1. **Ensure ACE environment is set up:**
+   ```bash
+   # Windows - Run from ACE Command Console or after calling mqsiprofile.cmd
+   call "C:\Program Files\IBM\ACE\13.0.6.0\server\bin\mqsiprofile.cmd"
+   ```
+
+2. **Build with Maven:**
+   ```bash
+   mvn clean install
+   ```
+
+**Maven build limitations:**
+- Requires Eclipse OSGi JARs (org.eclipse:osgi, org.eclipse.core:runtime)
+- Only works in IBM ACE Toolkit environment
+- Standard build script works in all environments
 
 ### Installation & Usage
 
@@ -143,9 +167,12 @@ PGP SupportPac
 
 ### Dependencies
 
-- **Bouncy Castle PGP** (bcpg-jdk18on-1.78.1.jar)
-- **Bouncy Castle Provider** (bcprov-jdk18on-1.78.1.jar)
+- **Bouncy Castle PGP** (bcpg-jdk18on-1.81.jar)
+- **Bouncy Castle Provider** (bcprov-jdk18on-1.81.jar)
+- **Bouncy Castle Utilities** (bcutil-jdk18on-1.81.jar)
 - **IBM ACE Runtime** (v13.0.6.0+)
+
+> **Note:** Bouncy Castle 1.81 is used to match the version included in IBM ACE v13.0.6.0 containers, avoiding class loading conflicts during deployment.
 
 ---
 
@@ -156,8 +183,9 @@ This project has been upgraded to Java 17 with modern features:
 ### Implemented
 - ✅ Try-with-resources for resource management
 - ✅ Modern collection types (replacing Vector)
-- ✅ Updated Bouncy Castle libraries (1.78.1)
+- ✅ Updated Bouncy Castle libraries (1.81)
 - ✅ Improved error handling
+- ✅ Container-compatible BC version (matches ACE 13.0.6.0)
 
 ### Planned (See [COMPREHENSIVE_MODERNIZATION_PLAN.md](COMPREHENSIVE_MODERNIZATION_PLAN.md))
 - 🔄 Switch expressions (JEP 361)

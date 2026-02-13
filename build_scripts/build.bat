@@ -32,7 +32,7 @@ echo.
 REM Check if Bouncy Castle libraries exist
 echo Checking Bouncy Castle libraries...
 set "BC_LIB_DIR=src\ACEv13\v2.0.1.0\PGPSupportPacImpl\lib"
-if not exist "%BC_LIB_DIR%\bcpg-jdk18on-1.78.1.jar" (
+if not exist "%BC_LIB_DIR%\bcpg-jdk18on-1.81.jar" (
     echo ERROR: Bouncy Castle libraries not found in %BC_LIB_DIR%
     echo Please run download-bouncy-castle-libs.bat first.
     pause

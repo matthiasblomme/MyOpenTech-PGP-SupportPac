@@ -1,6 +1,6 @@
 @echo off
 REM Deploy Maven-built JARs to ACE Integration Server and test
-REM This script backs up existing files, deploys new ones, and tests the setup
+REM This script backs up existing files, deploys new ones, starts IS, and runs tests
 
 setlocal enabledelayedexpansion
 
@@ -23,8 +23,8 @@ set "MQSI_REGISTRY=%TEST_SERVER%"
 REM Source files (Maven build output)
 set "SRC_IMPL_JAR=binary\ACEv13\lib\PGPSupportPacImpl.jar"
 set "SRC_PLUGIN_JAR=binary\ACEv13\plugins\PGPSupportPac.jar"
-set "SRC_BCPG_JAR=src\ACEv13\v2.0.1.0\PGPSupportPacImpl\lib\bcpg-jdk18on-1.78.1.jar"
-set "SRC_BCPROV_JAR=src\ACEv13\v2.0.1.0\PGPSupportPacImpl\lib\bcprov-jdk18on-1.78.1.jar"
+set "SRC_BCPG_JAR=src\ACEv13\v2.0.1.0\PGPSupportPacImpl\lib\bcpg-jdk18on-1.81.jar"
+set "SRC_BCPROV_JAR=src\ACEv13\v2.0.1.0\PGPSupportPacImpl\lib\bcprov-jdk18on-1.81.jar"
 
 REM Destination paths
 set "DEST_IMPL=%MQSI_BASE_FILEPATH%\server\jplugin"
@@ -102,6 +102,17 @@ if exist "%DEST_SHARED%\bcprov-jdk18on-1.78.1.jar" (
 echo   Total files backed up: !BACKUP_COUNT!
 echo.
 
+REM Stop any running Integration Server
+echo Checking for running Integration Server...
+taskkill /F /IM IntegrationServer.exe >nul 2>&1
+if !ERRORLEVEL! EQU 0 (
+    echo   [INFO] Integration Server was running, stopped it
+    timeout /t 2 /nobreak >nul
+) else (
+    echo   [OK] No Integration Server running
+)
+echo.
+
 REM Deploy new files
 echo Deploying Maven-built files...
 
@@ -126,17 +137,17 @@ if !ERRORLEVEL! EQU 0 (
 echo   Deploying Bouncy Castle libraries to %DEST_SHARED%...
 copy /Y "%SRC_BCPG_JAR%" "%DEST_SHARED%\" >nul 2>&1
 if !ERRORLEVEL! EQU 0 (
-    echo   [OK] Deployed bcpg-jdk18on-1.78.1.jar
+    echo   [OK] Deployed bcpg-jdk18on-1.81.jar
 ) else (
-    echo   [ERROR] Failed to deploy bcpg-jdk18on-1.78.1.jar
+    echo   [ERROR] Failed to deploy bcpg-jdk18on-1.81.jar
     exit /b 1
 )
 
 copy /Y "%SRC_BCPROV_JAR%" "%DEST_SHARED%\" >nul 2>&1
 if !ERRORLEVEL! EQU 0 (
-    echo   [OK] Deployed bcprov-jdk18on-1.78.1.jar
+    echo   [OK] Deployed bcprov-jdk18on-1.81.jar
 ) else (
-    echo   [ERROR] Failed to deploy bcprov-jdk18on-1.78.1.jar
+    echo   [ERROR] Failed to deploy bcprov-jdk18on-1.81.jar
     exit /b 1
 )
 
@@ -145,15 +156,66 @@ echo ========================================
 echo Deployment Complete!
 echo ========================================
 echo.
-echo Next steps:
-echo 1. Start the Integration Server:
-echo    IntegrationServer --work-dir %TEST_SERVER%
-echo.
-echo 2. Test the PGP encryption endpoint:
-echo    curl -X POST http://localhost:7800/pgp/encrypt
-echo.
-echo 3. If you need to restore original files:
-echo    Copy files from %BACKUP_DIR%
+
+REM Start Integration Server
+echo Starting Integration Server...
+call "%ACE_BASE%\server\bin\mqsiprofile.cmd" >nul 2>&1
+start /B "" IntegrationServer --work-dir "%TEST_SERVER%" --console-log >nul 2>&1
+
+REM Wait for server to start
+echo Waiting for Integration Server to start...
+set "MAX_WAIT=30"
+set "WAIT_COUNT=0"
+
+:WAIT_LOOP
+timeout /t 2 /nobreak >nul
+set /a WAIT_COUNT+=2
+
+REM Check if server is responding
+curl -s http://localhost:7800/pgp/encrypt >nul 2>&1
+if !ERRORLEVEL! EQU 0 (
+    echo   [OK] Integration Server started successfully ^(!WAIT_COUNT! seconds^)
+    goto SERVER_READY
+)
+
+if !WAIT_COUNT! GEQ !MAX_WAIT! (
+    echo   [ERROR] Integration Server failed to start within !MAX_WAIT! seconds
+    echo   Please check the server logs
+    exit /b 1
+)
+
+goto WAIT_LOOP
+
+:SERVER_READY
 echo.
 
-pause
+REM Run tests
+echo ========================================
+echo Running PGP Tests
+echo ========================================
+echo.
+
+echo Test 1: PGP Encryption
+echo -----------------------
+curl -X POST http://localhost:7800/pgp/encrypt
+echo.
+echo.
+
+echo Test 2: PGP Decryption
+echo -----------------------
+curl -X POST http://localhost:7800/pgp/decrypt
+echo.
+echo.
+
+echo ========================================
+echo Tests Complete!
+echo ========================================
+echo.
+echo Integration Server is still running.
+echo To stop it, run: taskkill /F /IM IntegrationServer.exe
+echo.
+echo If you need to restore original files:
+echo   Copy files from %BACKUP_DIR%
+echo.
+
+endlocal

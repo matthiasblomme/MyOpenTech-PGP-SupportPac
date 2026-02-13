@@ -29,6 +29,24 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpg-jdk18on</artifactId>
         </dependency>
+
+        <!-- IBM ACE Integration API -->
+        <dependency>
+            <groupId>com.ibm.ace</groupId>
+            <artifactId>IntegrationAPI</artifactId>
+            <version>13.0.6.0</version>
+            <scope>system</scope>
+            <systemPath>${ace.home}/common/classes/IntegrationAPI.jar</systemPath>
+        </dependency>
+
+        <!-- IBM ACE Java Plugin API -->
+        <dependency>
+            <groupId>com.ibm.ace</groupId>
+            <artifactId>jplugin2</artifactId>
+            <version>13.0.6.0</version>
+            <scope>system</scope>
+            <systemPath>${ace.home}/server/classes/jplugin2.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>
