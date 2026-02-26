@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Vector;
 
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -368,32 +367,30 @@ public class PGPKeyRing {
 	 *
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public Collection<PGPPublicKeyRingWrapper> getPublicKeys() {
-		Vector<PGPPublicKeyRingWrapper> outVec = new Vector<PGPPublicKeyRingWrapper>();
-		Iterator iter = publicKeyring.getKeyRings();
+		ArrayList<PGPPublicKeyRingWrapper> outList = new ArrayList<>();
+		Iterator<PGPPublicKeyRing> iter = publicKeyring.getKeyRings();
 		while (iter.hasNext()) {
-			PGPPublicKeyRing kr = (PGPPublicKeyRing) iter.next();
-			outVec.add(new PGPPublicKeyRingWrapper(kr));
+			PGPPublicKeyRing kr = iter.next();
+			outList.add(new PGPPublicKeyRingWrapper(kr));
 		}
 
-		return outVec;
+		return outList;
 	}
 
 	/**
 	 *
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public Collection<PGPSecretKeyRingWrapper> getPrivateKeys() {
-		Vector<PGPSecretKeyRingWrapper> outVec = new Vector<PGPSecretKeyRingWrapper>();
-		Iterator iter = secretKeyring.getKeyRings();
+		ArrayList<PGPSecretKeyRingWrapper> outList = new ArrayList<>();
+		Iterator<PGPSecretKeyRing> iter = secretKeyring.getKeyRings();
 		while (iter.hasNext()) {
-			PGPSecretKeyRing kr = (PGPSecretKeyRing) iter.next();
-			outVec.add(new PGPSecretKeyRingWrapper(kr));
+			PGPSecretKeyRing kr = iter.next();
+			outList.add(new PGPSecretKeyRingWrapper(kr));
 		}
 
-		return outVec;
+		return outList;
 	}
 	
 	/**
@@ -417,21 +414,20 @@ public class PGPKeyRing {
 	 * @return
 	 * @throws PGPException
 	 */
-	@SuppressWarnings("rawtypes")
 	public PGPSecretKey getSignKeyByHexKeyId(String iDHex) throws PGPException {
 		String keyId = formatHexString(iDHex);
 		
-		Collection privateKeyRing = getPrivateKeys();
-    	Iterator privateKeys = privateKeyRing.iterator();
+		Collection<PGPSecretKeyRingWrapper> privateKeyRing = getPrivateKeys();
+	   	Iterator<PGPSecretKeyRingWrapper> privateKeys = privateKeyRing.iterator();
 
-    	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
-    	while(privateKeys.hasNext()){
-    		pgpSecretKeyRingWrapper = (PGPSecretKeyRingWrapper)privateKeys.next();
+	   	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
+	   	while(privateKeys.hasNext()){
+	   		pgpSecretKeyRingWrapper = privateKeys.next();
 
-    		if(pgpSecretKeyRingWrapper.containsKeyId(keyId)){
-    			return pgpSecretKeyRingWrapper.getSigningKey();
-    		}
-    	}
+	   		if(pgpSecretKeyRingWrapper.containsKeyId(keyId)){
+	   			return pgpSecretKeyRingWrapper.getSigningKey();
+	   		}
+	   	}
 		
 		return null;
 	}
@@ -452,21 +448,20 @@ public class PGPKeyRing {
 	 * @return
 	 * @throws PGPException
 	 */
-	@SuppressWarnings("rawtypes")
 	public PGPPublicKey getEncryptionKeyByHexKeyId(String iDHex) throws PGPException {
 		String keyId = formatHexString(iDHex);
 		
-		Collection publicKeyRing = getPublicKeys();
-    	Iterator publicKeys = publicKeyRing.iterator();
+		Collection<PGPPublicKeyRingWrapper> publicKeyRing = getPublicKeys();
+	   	Iterator<PGPPublicKeyRingWrapper> publicKeys = publicKeyRing.iterator();
 
-    	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
-    	while(publicKeys.hasNext()){
-    		pgpPublicKeyRingWrapper = (PGPPublicKeyRingWrapper)publicKeys.next();
+	   	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
+	   	while(publicKeys.hasNext()){
+	   		pgpPublicKeyRingWrapper = publicKeys.next();
 
-    		if(pgpPublicKeyRingWrapper.containsKeyId(keyId)){
-    			return pgpPublicKeyRingWrapper.getEncryptionKey();
-    		}
-    	}
+	   		if(pgpPublicKeyRingWrapper.containsKeyId(keyId)){
+	   			return pgpPublicKeyRingWrapper.getEncryptionKey();
+	   		}
+	   	}
 		
 		return null;
 	}
@@ -486,19 +481,18 @@ public class PGPKeyRing {
 	 * @param userId
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public PGPPublicKey getEncryptionKeyByUserId(String userId){
-		Collection publicKeyRing = getPublicKeys();
-    	Iterator publicKeys = publicKeyRing.iterator();
+		Collection<PGPPublicKeyRingWrapper> publicKeyRing = getPublicKeys();
+	   	Iterator<PGPPublicKeyRingWrapper> publicKeys = publicKeyRing.iterator();
 
-    	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
-    	while(publicKeys.hasNext()){
-    		pgpPublicKeyRingWrapper = (PGPPublicKeyRingWrapper)publicKeys.next();
+	   	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
+	   	while(publicKeys.hasNext()){
+	   		pgpPublicKeyRingWrapper = publicKeys.next();
 
-    		if(pgpPublicKeyRingWrapper.containsUserId(userId)){
-    			return pgpPublicKeyRingWrapper.getEncryptionKey();
-    		}
-    	}
+	   		if(pgpPublicKeyRingWrapper.containsUserId(userId)){
+	   			return pgpPublicKeyRingWrapper.getEncryptionKey();
+	   		}
+	   	}
 		return null;
 	}
 
@@ -507,19 +501,18 @@ public class PGPKeyRing {
 	 * @param userId
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public PGPPublicKeyRing getPublicKeyRingByUserId(String userId){
-		Collection publicKeyRing = getPublicKeys();
-    	Iterator publicKeys = publicKeyRing.iterator();
+		Collection<PGPPublicKeyRingWrapper> publicKeyRing = getPublicKeys();
+	   	Iterator<PGPPublicKeyRingWrapper> publicKeys = publicKeyRing.iterator();
 
-    	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
-    	while(publicKeys.hasNext()){
-    		pgpPublicKeyRingWrapper = (PGPPublicKeyRingWrapper)publicKeys.next();
+	   	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
+	   	while(publicKeys.hasNext()){
+	   		pgpPublicKeyRingWrapper = publicKeys.next();
 
-    		if(pgpPublicKeyRingWrapper.matchUserId(userId)){
-    			return pgpPublicKeyRingWrapper.getPublicKeyRing();
-    		}
-    	}
+	   		if(pgpPublicKeyRingWrapper.matchUserId(userId)){
+	   			return pgpPublicKeyRingWrapper.getPublicKeyRing();
+	   		}
+	   	}
 		return null;
 	}
 
@@ -528,20 +521,19 @@ public class PGPKeyRing {
 	 * @param userId
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public PGPSecretKey getSigningKeyByUserId(String userId) {
-		Collection privateKeyRing = getPrivateKeys();
-    	Iterator privateKeys = privateKeyRing.iterator();
+		Collection<PGPSecretKeyRingWrapper> privateKeyRing = getPrivateKeys();
+	   	Iterator<PGPSecretKeyRingWrapper> privateKeys = privateKeyRing.iterator();
 
-    	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
-    	while(privateKeys.hasNext()){
-    		pgpSecretKeyRingWrapper = (PGPSecretKeyRingWrapper)privateKeys.next();
+	   	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
+	   	while(privateKeys.hasNext()){
+	   		pgpSecretKeyRingWrapper = privateKeys.next();
 
-    		if(pgpSecretKeyRingWrapper.containsUserId(userId)){
-    			return pgpSecretKeyRingWrapper.getSigningKey();
-    		}
-    	}
-    	return null;
+	   		if(pgpSecretKeyRingWrapper.containsUserId(userId)){
+	   			return pgpSecretKeyRingWrapper.getSigningKey();
+	   		}
+	   	}
+	   	return null;
 	}
 
 	/**
@@ -549,66 +541,63 @@ public class PGPKeyRing {
 	 * @param userId
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public PGPSecretKeyRing getSecretKeyRingByUserId(String userId) {
-		Collection privateKeyRing = getPrivateKeys();
-    	Iterator privateKeys = privateKeyRing.iterator();
+		Collection<PGPSecretKeyRingWrapper> privateKeyRing = getPrivateKeys();
+	   	Iterator<PGPSecretKeyRingWrapper> privateKeys = privateKeyRing.iterator();
 
-    	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
-    	while(privateKeys.hasNext()){
-    		pgpSecretKeyRingWrapper = (PGPSecretKeyRingWrapper)privateKeys.next();
+	   	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
+	   	while(privateKeys.hasNext()){
+	   		pgpSecretKeyRingWrapper = privateKeys.next();
 
-    		if(pgpSecretKeyRingWrapper.matchUserId(userId)){
-    			return pgpSecretKeyRingWrapper.getSecretKeyRing();
-    		}
-    	}
-    	return null;
+	   		if(pgpSecretKeyRingWrapper.matchUserId(userId)){
+	   			return pgpSecretKeyRingWrapper.getSecretKeyRing();
+	   		}
+	   	}
+	   	return null;
 	}
 
 	/**
 	 * Print Private Keys
 	 *
 	 */
-	@SuppressWarnings("rawtypes")
 	public String printPrivateKeys(){
 
 		StringBuffer sb = new StringBuffer();
-		Collection privateKeyRing = getPrivateKeys();
-    	Iterator privateKeys = privateKeyRing.iterator();
-    	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
+		Collection<PGPSecretKeyRingWrapper> privateKeyRing = getPrivateKeys();
+	   	Iterator<PGPSecretKeyRingWrapper> privateKeys = privateKeyRing.iterator();
+	   	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
 
-    	while(privateKeys.hasNext()){
-    		pgpSecretKeyRingWrapper = (PGPSecretKeyRingWrapper)privateKeys.next();
-    		sb.append(pgpSecretKeyRingWrapper + "\n");
-    	}
-    	
-    	return sb.toString();
+	   	while(privateKeys.hasNext()){
+	   		pgpSecretKeyRingWrapper = privateKeys.next();
+	   		sb.append(pgpSecretKeyRingWrapper + "\n");
+	   	}
+	   	
+	   	return sb.toString();
 	}
 	
 	/**
 	 * Print private keys with subkey details
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public String printPrivateSubKeys(){
 
 		StringBuffer sb = new StringBuffer();
-		Collection privateKeyRing = getPrivateKeys();
-    	Iterator privateKeys = privateKeyRing.iterator();
-    	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
+		Collection<PGPSecretKeyRingWrapper> privateKeyRing = getPrivateKeys();
+	   	Iterator<PGPSecretKeyRingWrapper> privateKeys = privateKeyRing.iterator();
+	   	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
 
-    	while(privateKeys.hasNext()){
-    		pgpSecretKeyRingWrapper = (PGPSecretKeyRingWrapper)privateKeys.next();
-    		sb.append(pgpSecretKeyRingWrapper + " Subkey Id (Hex): ");
+	   	while(privateKeys.hasNext()){
+	   		pgpSecretKeyRingWrapper = privateKeys.next();
+	   		sb.append(pgpSecretKeyRingWrapper + " Subkey Id (Hex): ");
 			
-    		ArrayList arrayList = pgpSecretKeyRingWrapper.getSubKeyIds();    		
-    		for (int i = 0; i < arrayList.size(); i++) {
-    			sb.append("[0x" + arrayList.get(i).toString().toUpperCase() + "] ");
-			}    		
-    		sb.append("\n");
-    	}
-    	
-    	return sb.toString();
+	   		ArrayList<String> arrayList = pgpSecretKeyRingWrapper.getSubKeyIds();
+	   		for (int i = 0; i < arrayList.size(); i++) {
+	   			sb.append("[0x" + arrayList.get(i).toString().toUpperCase() + "] ");
+			}
+	   		sb.append("\n");
+	   	}
+	   	
+	   	return sb.toString();
 	}
 
 
@@ -616,46 +605,44 @@ public class PGPKeyRing {
 	 * Print Public Keys
 	 *
 	 */
-	@SuppressWarnings("rawtypes")
 	public String printPublicKeys(){
 		
 		StringBuffer sb = new StringBuffer();
-		Collection publicKeyRing = getPublicKeys();
-    	Iterator publicKeys = publicKeyRing.iterator();
-    	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
+		Collection<PGPPublicKeyRingWrapper> publicKeyRing = getPublicKeys();
+	   	Iterator<PGPPublicKeyRingWrapper> publicKeys = publicKeyRing.iterator();
+	   	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
 
-    	while(publicKeys.hasNext()){
-    		pgpPublicKeyRingWrapper = (PGPPublicKeyRingWrapper)publicKeys.next();
-    		sb.append(pgpPublicKeyRingWrapper + "\n");
-    	}
-    	
-    	return sb.toString();
+	   	while(publicKeys.hasNext()){
+	   		pgpPublicKeyRingWrapper = publicKeys.next();
+	   		sb.append(pgpPublicKeyRingWrapper + "\n");
+	   	}
+	   	
+	   	return sb.toString();
 	}
 	
 	/**
 	 * Get list of sub key Ids
 	 * @return
 	 */
-	@SuppressWarnings("rawtypes")
 	public String printPublicSubKeys(){
 		
 		StringBuffer sb = new StringBuffer();
-		Collection publicKeyRing = getPublicKeys();
-    	Iterator publicKeys = publicKeyRing.iterator();
-    	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
+		Collection<PGPPublicKeyRingWrapper> publicKeyRing = getPublicKeys();
+	   	Iterator<PGPPublicKeyRingWrapper> publicKeys = publicKeyRing.iterator();
+	   	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
 
-    	while(publicKeys.hasNext()){
-    		pgpPublicKeyRingWrapper = (PGPPublicKeyRingWrapper)publicKeys.next();
-    		sb.append(pgpPublicKeyRingWrapper + " Subkey Id (Hex): ");
-    				
-    		ArrayList arrayList = pgpPublicKeyRingWrapper.getSubKeyIds();    		
-    		for (int i = 0; i < arrayList.size(); i++) {
-    			sb.append("[0x" + arrayList.get(i).toString().toUpperCase() + "] ");
-			}    		
-    		sb.append("\n");
-    	}
-    	
-    	return sb.toString();
+	   	while(publicKeys.hasNext()){
+	   		pgpPublicKeyRingWrapper = publicKeys.next();
+	   		sb.append(pgpPublicKeyRingWrapper + " Subkey Id (Hex): ");
+	   				
+	   		ArrayList<String> arrayList = pgpPublicKeyRingWrapper.getSubKeyIds();
+	   		for (int i = 0; i < arrayList.size(); i++) {
+	   			sb.append("[0x" + arrayList.get(i).toString().toUpperCase() + "] ");
+			}
+	   		sb.append("\n");
+	   	}
+	   	
+	   	return sb.toString();
 	}
 
 	/**

@@ -140,11 +140,11 @@ public class PGPJavaUtil {
 
 		Iterator<PGPPublicKeyRing> keyRingIter = pgpPub.getKeyRings();
 		while (keyRingIter.hasNext()) {
-			PGPPublicKeyRing keyRing = (PGPPublicKeyRing) keyRingIter.next();
+			PGPPublicKeyRing keyRing = keyRingIter.next();
 
 			Iterator<PGPPublicKey> keyIter = keyRing.getPublicKeys();
 			while (keyIter.hasNext()) {
-				PGPPublicKey key = (PGPPublicKey) keyIter.next();
+				PGPPublicKey key = keyIter.next();
 
 				if (key.isEncryptionKey()) {
 					return key;

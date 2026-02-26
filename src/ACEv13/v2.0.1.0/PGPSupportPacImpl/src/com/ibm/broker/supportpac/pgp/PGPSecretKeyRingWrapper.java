@@ -173,13 +173,12 @@ public class PGPSecretKeyRingWrapper {
 	 * Get list of subkeys
 	 * @return
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public ArrayList getSubKeyIds() {
-		ArrayList arraylist = new ArrayList();
+	public ArrayList<String> getSubKeyIds() {
+		ArrayList<String> arraylist = new ArrayList<>();
 		
-		Iterator iter = base.getSecretKeys();
+		Iterator<PGPSecretKey> iter = base.getSecretKeys();
 		while (iter.hasNext()) {
-			PGPSecretKey k = (PGPSecretKey) iter.next();
+			PGPSecretKey k = iter.next();
 			arraylist.add(Long.toHexString(k.getKeyID()));
 		}
 

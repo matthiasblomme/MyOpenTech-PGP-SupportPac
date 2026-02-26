@@ -163,7 +163,7 @@ public class PGPDecrypter {
 		}
 
 		// Find the secret key
-		Iterator encObjects = pgpEncryptedDataList.getEncryptedDataObjects();
+		Iterator<?> encObjects = pgpEncryptedDataList.getEncryptedDataObjects();
 		if (!encObjects.hasNext()){
 		    throw new RuntimeException("Input does not contain any encrypted data");
 		}
