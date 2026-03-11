@@ -289,6 +289,7 @@ This license ensures:
 ### Community
 - [IBM developerWorks Forum](https://www.ibm.com/developerworks/community/groups/community/pgpsupportpaciib)
 - [MQSeries.net Forum](http://www.mqseries.net/phpBB2/viewtopic.php?t=68728)
+- [Discord: #pgp-node](https://discord.gg/GGsXSMbgNF) - Community support channel
 
 ---
 
@@ -310,6 +311,7 @@ See [CONTRIBUTORS.md](CONTRIBUTORS.md) for a list of contributors *(coming soon)
 ### Questions or Issues?
 - Open an issue in this repository
 - Visit the community forums (links above)
+- Join the [Discord #pgp-node channel](https://discord.gg/GGsXSMbgNF) for community support
 
 ### Feedback & Suggestions
 - Email: **dipakpal.opentech@gmail.com** (original author)
