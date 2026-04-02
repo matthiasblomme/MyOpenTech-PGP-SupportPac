@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ibm.broker.supportpac</groupId>
+        <artifactId>pgp-supportpac-parent</artifactId>
+        <version>2.0.1.0</version>
+        <relativePath>../../../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>PGPSupportPac</artifactId>
+    <packaging>jar</packaging>
+
+    <name>PGP SupportPac Plugin</name>
+    <description>Eclipse plugin for IBM App Connect Enterprise (ACE) v13</description>
+
+    <properties>
+        <!-- ACE Installation Path - Override via -Dace.home=... -->
+        <ace.home>${env.ACE_HOME}</ace.home>
+    </properties>
+
+    <dependencies>
+        <!-- Internal dependency on PGPSupportPacImpl -->
+        <dependency>
+            <groupId>com.ibm.broker.supportpac</groupId>
+            <artifactId>PGPSupportPacImpl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Bouncy Castle Provider (transitive from PGPSupportPacImpl) -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+        </dependency>
+
+        <!-- Bouncy Castle PGP (transitive from PGPSupportPacImpl) -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpg-jdk18on</artifactId>
+        </dependency>
+
+        <!-- IBM ACE/IIB API Dependencies -->
+        <!-- Note: These are provided by the ACE runtime environment -->
+        <!-- Users need to set ACE_HOME environment variable or pass -Dace.home=... -->
+        
+        <!-- Eclipse/OSGi Dependencies (provided by ACE) -->
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>osgi</artifactId>
+            <version>3.18.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.core</groupId>
+            <artifactId>runtime</artifactId>
+            <version>3.26.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <outputDirectory>target/classes</outputDirectory>
+
+        <resources>
+            <resource>
+                <directory>.</directory>
+                <includes>
+                    <include>plugin.xml</include>
+                    <include>palette.xmi</include>
+                    <include>palette.properties</include>
+                    <include>build.properties</include>
+                    <include>HelpContexts.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>META-INF</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                    <include>MANIFEST.MF</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>com</directory>
+                <targetPath>com</targetPath>
+                <includes>
+                    <include>**/*.msgnode</include>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>icons</directory>
+                <targetPath>icons</targetPath>
+                <includes>
+                    <include>**/*.gif</include>
+                    <include>**/*.png</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>generated</directory>
+                <targetPath>generated</targetPath>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <!-- Maven Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                        <arg>-Xlint:-processing</arg>
+                        <!-- Suppress warnings for missing ACE APIs during compilation -->
+                        <arg>-Xlint:-path</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <!-- Maven JAR Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>META-INF/MANIFEST.MF</manifestFile>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                    </archive>
+                    <outputDirectory>${project.basedir}/../../../../binary/ACEv13/plugins</outputDirectory>
+                    <finalName>PGPSupportPac</finalName>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Clean Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.basedir}/bin</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- Profile for building with ACE installation -->
+        <profile>
+            <id>with-ace</id>
+            <activation>
+                <property>
+                    <name>ace.home</name>
+                </property>
+            </activation>
+            <dependencies>
+                <!-- Add ACE JARs as system dependencies when ace.home is set -->
+                <!-- Users need to configure these based on their ACE installation -->
+            </dependencies>
+        </profile>
+    </profiles>
+</project>

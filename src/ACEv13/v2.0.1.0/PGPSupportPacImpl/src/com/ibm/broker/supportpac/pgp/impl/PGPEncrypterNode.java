@@ -5,8 +5,8 @@ import com.ibm.broker.supportpac.pgp.PGPEncrypter;
 import com.ibm.broker.supportpac.pgp.PGPEnvironment;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 /**
@@ -573,8 +573,8 @@ public class PGPEncrypterNode extends MbNode implements MbNodeInterface {
 							throw new RuntimeException("Archive Directory can not be created: " + archiveDirectoryName);
 						}
 						
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-						String archiveFileName = archiveDirectoryName + "/" + vInputFileNameDelete + "." + sdf.format(new Date());
+						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+						String archiveFileName = archiveDirectoryName + "/" + vInputFileNameDelete + "." + LocalDateTime.now().format(formatter);
 						
 						File inputFile = new File(archiveBaseDirectory + "/" + vInputFileNameDelete);
 						inputFile.renameTo(new File(archiveFileName));

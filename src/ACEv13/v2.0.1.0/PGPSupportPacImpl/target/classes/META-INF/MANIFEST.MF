@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: pgpkeytool
+Class-Path: bcpg-jdk18on-1.78.1.jar bcprov-jdk18on-1.78.1.jar
+

@@ -5,8 +5,8 @@ REM This script compiles the Java source files and creates JAR files
 setlocal enabledelayedexpansion
 
 REM Set Java 17 home from IBM ACE installation
-set "JAVA_HOME=C:\Program Files\IBM\ACE\13.0.6.0\common\java17"
-set "ACE_HOME=C:\Program Files\IBM\ACE\13.0.6.0"
+set "JAVA_HOME=C:\Program Files\IBM\ACE\13.0.7.0\common\java17"
+set "ACE_HOME=C:\Program Files\IBM\ACE\13.0.7.0"
 
 echo ========================================
 echo PGP SupportPac Build Script (Java 17)
@@ -32,7 +32,7 @@ echo.
 REM Check if Bouncy Castle libraries exist
 echo Checking Bouncy Castle libraries...
 set "BC_LIB_DIR=src\ACEv13\v2.0.1.0\PGPSupportPacImpl\lib"
-if not exist "%BC_LIB_DIR%\bcpg-jdk18on-1.78.1.jar" (
+if not exist "%BC_LIB_DIR%\bcpg-jdk18on-1.81.jar" (
     echo ERROR: Bouncy Castle libraries not found in %BC_LIB_DIR%
     echo Please run download-bouncy-castle-libs.bat first.
     pause

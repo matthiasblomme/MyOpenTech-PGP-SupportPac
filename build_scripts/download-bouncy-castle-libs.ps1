@@ -3,8 +3,15 @@
 
 $ErrorActionPreference = "Stop"
 
+# Get the project root directory (parent of build_scripts)
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Split-Path -Parent $scriptDir
+
+# Change to project root to ensure correct paths
+Push-Location $projectRoot
+
 # Define library versions and URLs
-$BC_VERSION = "1.78.1"
+$BC_VERSION = "1.81"
 $MAVEN_BASE_URL = "https://repo1.maven.org/maven2/org/bouncycastle"
 
 $libraries = @(
@@ -22,7 +29,7 @@ $libraries = @(
     }
 )
 
-# Define target directories
+# Define target directories (relative to project root)
 $targetDirs = @(
     "src\ACEv13\v2.0.1.0\PGPSupportPacImpl\lib",
     "binary\ACEv13\lib"
@@ -104,3 +111,6 @@ Write-Host "2. Rebuild the project using IntelliJ IDEA or the compilation script
 Write-Host "3. Test the PGP encryption/decryption functionality" -ForegroundColor White
 Write-Host ""
 Write-Host "For detailed instructions, see JAVA17_UPGRADE_NOTES.md" -ForegroundColor Cyan
+
+# Restore original directory
+Pop-Location

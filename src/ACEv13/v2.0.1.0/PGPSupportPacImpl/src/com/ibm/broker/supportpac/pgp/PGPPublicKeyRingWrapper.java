@@ -174,13 +174,12 @@ public class PGPPublicKeyRingWrapper  {
      * 
      * @return
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public ArrayList getSubKeyIds(){
-    	ArrayList arraylist = new ArrayList();
-    	Iterator iter = base.getPublicKeys();
+ public ArrayList<String> getSubKeyIds(){
+    	ArrayList<String> arraylist = new ArrayList<>();
+    	Iterator<PGPPublicKey> iter = base.getPublicKeys();
 
         while(iter.hasNext()){
-            PGPPublicKey k = (PGPPublicKey) iter.next();
+            PGPPublicKey k = iter.next();
             arraylist.add(Long.toHexString(k.getKeyID()));
         }
 

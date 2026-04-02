@@ -4,7 +4,7 @@ REM This script uses PowerShell to download the files
 
 echo ========================================
 echo Bouncy Castle Library Downloader
-echo Version: 1.78.1 for Java 17+
+echo Version: 1.81 for Java 17+
 echo ========================================
 echo.
 

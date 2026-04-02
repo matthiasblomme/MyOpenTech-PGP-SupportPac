@@ -202,17 +202,18 @@ public class PGPKeyUtil {
 		// Create an empty file if does not exist
 		File file = new File(privateKeyRepositoryFile);
 		if(!file.exists()){
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.close();
+			try (FileOutputStream fos = new FileOutputStream(file)) {
+				// Empty file created
+			}
 		}
 		
 		PGPKeyRing pgpKeyRing = new PGPKeyRing("PGP");
 		pgpKeyRing.loadPrivateKeyRepository(privateKeyRepositoryFile);
 
-		FileInputStream fis = new FileInputStream(privateKeyFile);
-		byte[] data = new byte[fis.available()];
-		fis.read(data);
-		fis.close();
+		byte[] data;
+		try (FileInputStream fis = new FileInputStream(privateKeyFile)) {
+			data = fis.readAllBytes();
+		}
 		
 		if(!asciiArmor){
 			data = PGPJavaUtil.encodeAsciiArmored(data);
@@ -235,20 +236,21 @@ public class PGPKeyUtil {
 		// Create an empty file if does not exist
 		File file = new File(publicKeyRepositoryFile);
 		if(!file.exists()){
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.close();
+			try (FileOutputStream fos = new FileOutputStream(file)) {
+				// Empty file created
+			}
 		}
 
 		PGPKeyRing pgpKeyRing = new PGPKeyRing("PGP");
 		pgpKeyRing.loadPublicKeyRepository(publicKeyRepositoryFile);
 
-		FileInputStream fis = new FileInputStream(publicKeyFile);
-		byte[] data = new byte[fis.available()];
-		fis.read(data);
-		fis.close();
+		byte[] data;
+		try (FileInputStream fis = new FileInputStream(publicKeyFile)) {
+			data = fis.readAllBytes();
+		}
 		
 		if(!asciiArmor){
-			data = PGPJavaUtil.encodeAsciiArmored(data);			
+			data = PGPJavaUtil.encodeAsciiArmored(data);
 		}
 		
 		pgpKeyRing.importPublicKey(new ByteArrayInputStream(data));
