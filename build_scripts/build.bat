@@ -5,8 +5,8 @@ REM This script compiles the Java source files and creates JAR files
 setlocal enabledelayedexpansion
 
 REM Set Java 17 home from IBM ACE installation
-set "JAVA_HOME=C:\Program Files\IBM\ACE\13.0.6.0\common\java17"
-set "ACE_HOME=C:\Program Files\IBM\ACE\13.0.6.0"
+set "JAVA_HOME=C:\Program Files\IBM\ACE\13.0.7.0\common\java17"
+set "ACE_HOME=C:\Program Files\IBM\ACE\13.0.7.0"
 
 echo ========================================
 echo PGP SupportPac Build Script (Java 17)
