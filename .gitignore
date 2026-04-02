@@ -215,3 +215,4 @@ pip-log.txt
 .mr.developer
 *.class
 
+build_err.txt
