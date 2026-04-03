@@ -22,44 +22,49 @@ import org.bouncycastle.openpgp.PGPSecretKeyRing;
   */
 public class PGPKeyUtil {
 	
-	private static final String usage =  "Usage: " +
-	"\njava pgpkeytool importPrivateKey -sr privateKeyRepositoryFile -i asciiArmor -sf privateKeyFile"+
-	"\njava pgpkeytool importPublicKey -pr publicKeyRepositoryFile -i asciiArmor -pf publicKeyFile"+
-	"\njava pgpkeytool exportPrivateKey -sr privateKeyRepositoryFile -su privateKeyUserId -i asciiArmor -sf privateKeyFile"+
-	"\njava pgpkeytool exportPublicKey -pr publicKeyRepositoryFile -pu publicKeyUserId -i asciiArmor -pf publicKeyFile"+
-	"\njava pgpkeytool changePrivateKeyPassphrase -sr privateKeyRepositoryFile -su privateKeyUserId"+
-	"\njava pgpkeytool deletePublicKey -pr publicKeyRepositoryFile -pu publicKeyUserId"+
-	"\njava pgpkeytool deletePrivateKey -sr privateKeyRepositoryFile -su privateKeyUserId"+
-	"\njava pgpkeytool listPrivateKeys -sr privateKeyRepositoryFile"+
-	"\njava pgpkeytool listPublicKeys -pr publicKeyRepositoryFile"+
-	"\n\nSupported Operations on PGP Key Repositories:"+
-	"\nchangePrivateKeyPassphrase: Change passphrase for specified private key." +
-	"\nimportPrivateKey: \tImport specified Private key into Private key Repository file." +
-	"\nimportPublicKey: \tImport specified Public key into Public key Repository file." +
-	"\nexportPrivateKey: \tExport specified Private key from Private key Repository file into separate Private key file." +
-	"\nexportPublicKey: \tExport specified Public key from Public key Repository file into separate Public key file." +
-	"\ndeletePrivateKey: \tDelete specified Private key from Private key Repository file." +
-	"\ndeletePublicKey: \tDelete specified Public key from Public key Repository file." +		
-	"\nlistPrivateKeys: \tList all Private keys in Private key Repository file." +
-	"\nlistPublicKeys: \tList all Public keys in Public key Repository file."+
-	"\n\nOptions:" +
-	"\n-sr privateKeyRepositoryFile : \tPrivateKey Repository File (Absolute Path)."+
-	"\n-pr publicKeyRepositoryFile : \tPublicKey Repository File (Absolute Path)."+
-	"\n-sf privateKeyFile : \t\tPrivateKey File (Absolute Path)."+
-	"\n-pf publicKeyFile : \t\tPublicKey File (Absolute Path)."+
-	"\n-su privateKeyUserId : \t\tPrivateKey User Id"+
-	"\n-pu publicKeyUserId : \t\tPublicKey User Id"+
-	"\n-i asciiArmor [true|false] : \tWhether Key file is Ascii armored. (Optional) Default: true"+
-	"\n\nExamples:"+
-	"\njava pgpkeytool importPrivateKey -sr C:/PGP/KeyRepository/private.pgp -i true -sf C:/PGP/KeyRepository/SecretKey.asc"+
-	"\njava pgpkeytool importPublicKey -pr C:/PGP/KeyRepository/public.pgp -i true -pf C:/PGP/KeyRepository/PublicKey.asc"+
-	"\njava pgpkeytool exportPrivateKey -sr C:/PGP/KeyRepository/private.pgp -su \"IBM <ibm-pgp-keys@in.ibm.com>\" -i true -sf C:/PGP/KeyRepository/SecretKeyExported.asc"+
-	"\njava pgpkeytool exportPublicKey -pr C:/PGP/KeyRepository/public.pgp -pu \"IBM <ibm-pgp-keys@in.ibm.com>\" -i true -pf C:/PGP/KeyRepository/PublicKeyExported.asc"+
-	"\njava pgpkeytool changePrivateKeyPassphrase -sr C:/PGP/KeyRepository/private.pgp -su \"IBM <ibm-pgp-keys@in.ibm.com>\""+
-	"\njava pgpkeytool deletePublicKey -pr C:/PGP/KeyRepository/public.pgp -pu \"IBM <ibm-pgp-keys@in.ibm.com>\""+
-	"\njava pgpkeytool deletePrivateKey -sr C:/PGP/KeyRepository/private.pgp -su \"IBM <ibm-pgp-keys@in.ibm.com>\""+
-	"\njava pgpkeytool listPrivateKeys -sr C:/PGP/KeyRepository/private.pgp"+
-	"\njava pgpkeytool listPublicKeys -pr C:/PGP/KeyRepository/public.pgp";
+	private static final String usage = """
+		Usage:
+		java pgpkeytool importPrivateKey -sr privateKeyRepositoryFile -i asciiArmor -sf privateKeyFile
+		java pgpkeytool importPublicKey -pr publicKeyRepositoryFile -i asciiArmor -pf publicKeyFile
+		java pgpkeytool exportPrivateKey -sr privateKeyRepositoryFile -su privateKeyUserId -i asciiArmor -sf privateKeyFile
+		java pgpkeytool exportPublicKey -pr publicKeyRepositoryFile -pu publicKeyUserId -i asciiArmor -pf publicKeyFile
+		java pgpkeytool changePrivateKeyPassphrase -sr privateKeyRepositoryFile -su privateKeyUserId
+		java pgpkeytool deletePublicKey -pr publicKeyRepositoryFile -pu publicKeyUserId
+		java pgpkeytool deletePrivateKey -sr privateKeyRepositoryFile -su privateKeyUserId
+		java pgpkeytool listPrivateKeys -sr privateKeyRepositoryFile
+		java pgpkeytool listPublicKeys -pr publicKeyRepositoryFile
+
+		Supported Operations on PGP Key Repositories:
+		changePrivateKeyPassphrase: Change passphrase for specified private key.
+		importPrivateKey:           Import specified Private key into Private key Repository file.
+		importPublicKey:            Import specified Public key into Public key Repository file.
+		exportPrivateKey:           Export specified Private key from Private key Repository file into separate Private key file.
+		exportPublicKey:            Export specified Public key from Public key Repository file into separate Public key file.
+		deletePrivateKey:           Delete specified Private key from Private key Repository file.
+		deletePublicKey:            Delete specified Public key from Public key Repository file.
+		listPrivateKeys:            List all Private keys in Private key Repository file.
+		listPublicKeys:             List all Public keys in Public key Repository file.
+
+		Options:
+		-sr privateKeyRepositoryFile : PrivateKey Repository File (Absolute Path).
+		-pr publicKeyRepositoryFile  : PublicKey Repository File (Absolute Path).
+		-sf privateKeyFile           : PrivateKey File (Absolute Path).
+		-pf publicKeyFile            : PublicKey File (Absolute Path).
+		-su privateKeyUserId         : PrivateKey User Id
+		-pu publicKeyUserId          : PublicKey User Id
+		-i  asciiArmor [true|false]  : Whether Key file is Ascii armored. (Optional) Default: true
+
+		Examples:
+		java pgpkeytool importPrivateKey -sr C:/PGP/KeyRepository/private.pgp -i true -sf C:/PGP/KeyRepository/SecretKey.asc
+		java pgpkeytool importPublicKey -pr C:/PGP/KeyRepository/public.pgp -i true -pf C:/PGP/KeyRepository/PublicKey.asc
+		java pgpkeytool exportPrivateKey -sr C:/PGP/KeyRepository/private.pgp -su "IBM <ibm-pgp-keys@in.ibm.com>" -i true -sf C:/PGP/KeyRepository/SecretKeyExported.asc
+		java pgpkeytool exportPublicKey -pr C:/PGP/KeyRepository/public.pgp -pu "IBM <ibm-pgp-keys@in.ibm.com>" -i true -pf C:/PGP/KeyRepository/PublicKeyExported.asc
+		java pgpkeytool changePrivateKeyPassphrase -sr C:/PGP/KeyRepository/private.pgp -su "IBM <ibm-pgp-keys@in.ibm.com>"
+		java pgpkeytool deletePublicKey -pr C:/PGP/KeyRepository/public.pgp -pu "IBM <ibm-pgp-keys@in.ibm.com>"
+		java pgpkeytool deletePrivateKey -sr C:/PGP/KeyRepository/private.pgp -su "IBM <ibm-pgp-keys@in.ibm.com>"
+		java pgpkeytool listPrivateKeys -sr C:/PGP/KeyRepository/private.pgp
+		java pgpkeytool listPublicKeys -pr C:/PGP/KeyRepository/public.pgp
+		""";
 
 	/**
 	 * @param args

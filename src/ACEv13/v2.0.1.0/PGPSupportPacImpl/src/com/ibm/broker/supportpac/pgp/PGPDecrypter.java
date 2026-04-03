@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.Provider;
 import java.security.SignatureException;
 import java.util.Iterator;
@@ -45,20 +46,23 @@ public class PGPDecrypter {
 	 * @throws PGPException
 	 */
     public static PGPDecryptionResult decryptUTF8Text(String cipherText, String passPhrase) throws PGPException {
+    	if (cipherText == null || cipherText.isEmpty()) {
+    		throw new PGPException("cipherText must not be null or empty");
+    	}
     	PGPDecryptionResult res = null;
     	try {
     		// Get PGP Keyring
     		PGPKeyRing pgpKeyRing = PGPEnvironment.getDefaultPGPKeyRing();
-			ByteArrayInputStream in = new ByteArrayInputStream(cipherText.getBytes("UTF8"));
+			ByteArrayInputStream in = new ByteArrayInputStream(cipherText.getBytes(StandardCharsets.UTF_8));
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			
+
 			if(passPhrase == null){
     			passPhrase = "";
     		}
-			
+
 			char[] passwd = passPhrase.toCharArray();
 			res = decrypt(in, out, passwd, pgpKeyRing);
-			res.setDecryptedText(out.toString("UTF8"));
+			res.setDecryptedText(out.toString(StandardCharsets.UTF_8));
 		} catch (Exception e) {
 			throw new PGPException(e.getMessage());
 		}
@@ -129,8 +133,7 @@ public class PGPDecrypter {
      * @return PGPDecryptionResult
      * @throws Exception
      */
-    @SuppressWarnings("rawtypes")
-	private static PGPDecryptionResult decrypt(InputStream in, OutputStream out, char[] passwd, PGPKeyRing pgpKeyRing) throws Exception {
+    private static PGPDecryptionResult decrypt(InputStream in, OutputStream out, char[] passwd, PGPKeyRing pgpKeyRing) throws Exception {
     	
     	Provider provider = PGPJavaUtil.getProvider("BC");
     	
@@ -156,8 +159,8 @@ public class PGPDecrypter {
 		}
 
 		// First object can be a PGP marker packet.
-		if (pgpObject instanceof PGPEncryptedDataList){
-		    pgpEncryptedDataList = (PGPEncryptedDataList)pgpObject;
+		if (pgpObject instanceof PGPEncryptedDataList encDataList) {
+		    pgpEncryptedDataList = encDataList;
 		} else {
 		    pgpEncryptedDataList = (PGPEncryptedDataList) pgpF.nextObject();
 		}
@@ -231,8 +234,7 @@ public class PGPDecrypter {
 		boolean isCompressed = false;
 		
 		// Check if input data is compressed
-		if (message instanceof PGPCompressedData) {
-		    PGPCompressedData cData = (PGPCompressedData) message;
+		if (message instanceof PGPCompressedData cData) {
 		    pgpFact = new JcaPGPObjectFactory(cData.getDataStream());
 		    message = pgpFact.nextObject();
 		    if (message instanceof PGPOnePassSignatureList){

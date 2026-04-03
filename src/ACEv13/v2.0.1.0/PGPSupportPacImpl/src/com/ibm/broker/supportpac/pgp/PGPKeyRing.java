@@ -93,7 +93,7 @@ public class PGPKeyRing {
 	}
 
 	/**
-	 * Clrear Key Repository
+	 * Clear all loaded keys from memory without removing the repository files.
 	 * @throws Exception
 	 */
 	public void clear() throws Exception {
@@ -364,8 +364,8 @@ public class PGPKeyRing {
 	}
 
 	/**
-	 *
-	 * @return
+	 * Return all public key rings in this repository.
+	 * @return collection of {@link PGPPublicKeyRingWrapper} for every key ring in the public repository
 	 */
 	public Collection<PGPPublicKeyRingWrapper> getPublicKeys() {
 		ArrayList<PGPPublicKeyRingWrapper> outList = new ArrayList<>();
@@ -379,8 +379,8 @@ public class PGPKeyRing {
 	}
 
 	/**
-	 *
-	 * @return
+	 * Return all secret key rings in this repository.
+	 * @return collection of {@link PGPSecretKeyRingWrapper} for every key ring in the private repository
 	 */
 	public Collection<PGPSecretKeyRingWrapper> getPrivateKeys() {
 		ArrayList<PGPSecretKeyRingWrapper> outList = new ArrayList<>();
@@ -409,10 +409,10 @@ public class PGPKeyRing {
 	}
 	
 	/**
-	 * Get PGPSecretKey by Hex Key Id
-	 * @param iDHex
-	 * @return
-	 * @throws PGPException
+	 * Find a signing-capable secret key by its hex key ID.
+	 * @param iDHex hex key ID string, with or without "0x" prefix
+	 * @return the matching {@link PGPSecretKey}, or {@code null} if not found
+	 * @throws PGPException if the secret key collection cannot be queried
 	 */
 	public PGPSecretKey getSignKeyByHexKeyId(String iDHex) throws PGPException {
 		String keyId = formatHexString(iDHex);
@@ -433,10 +433,10 @@ public class PGPKeyRing {
 	}
 
 	/**
-	 *
-	 * @param iID
-	 * @return
-	 * @throws PGPException
+	 * Find a secret key by its numeric key ID.
+	 * @param iID the numeric key ID
+	 * @return the matching {@link PGPSecretKey}, or {@code null} if not found
+	 * @throws PGPException if the secret key collection cannot be queried
 	 */
 	public PGPSecretKey getPrivateKeyByID(long iID) throws PGPException {
 		return secretKeyring.getSecretKey(iID);
@@ -467,10 +467,10 @@ public class PGPKeyRing {
 	}
 
 	/**
-	 *
-	 * @param iID
-	 * @return
-	 * @throws PGPException
+	 * Find a public key by its numeric key ID.
+	 * @param iID the numeric key ID
+	 * @return the matching {@link PGPPublicKey}, or {@code null} if not found
+	 * @throws PGPException if the public key collection cannot be queried
 	 */
 	public PGPPublicKey getPublicKeyByID(long iID) throws PGPException {
 		return publicKeyring.getPublicKey(iID);
@@ -497,9 +497,9 @@ public class PGPKeyRing {
 	}
 
 	/**
-	 *
-	 * @param userId
-	 * @return
+	 * Find the public key ring whose user ID exactly matches the given string.
+	 * @param userId the user ID to match (e.g. "Name &lt;email&gt;")
+	 * @return the matching {@link PGPPublicKeyRing}, or {@code null} if not found
 	 */
 	public PGPPublicKeyRing getPublicKeyRingByUserId(String userId){
 		Collection<PGPPublicKeyRingWrapper> publicKeyRing = getPublicKeys();
@@ -537,9 +537,9 @@ public class PGPKeyRing {
 	}
 
 	/**
-	 *
-	 * @param userId
-	 * @return
+	 * Find the secret key ring whose user ID exactly matches the given string.
+	 * @param userId the user ID to match (e.g. "Name &lt;email&gt;")
+	 * @return the matching {@link PGPSecretKeyRing}, or {@code null} if not found
 	 */
 	public PGPSecretKeyRing getSecretKeyRingByUserId(String userId) {
 		Collection<PGPSecretKeyRingWrapper> privateKeyRing = getPrivateKeys();
@@ -701,10 +701,18 @@ public class PGPKeyRing {
 		return secretKeyring;
 	}
 
+	/**
+	 * Return whether this key ring has been successfully initialized.
+	 * @return {@code true} if {@link #init} has completed successfully
+	 */
 	public boolean isInitialized() {
 		return initialized;
 	}
 
+	/**
+	 * Return the name of this key repository.
+	 * @return repository name as supplied to the constructor
+	 */
 	public String getRepositoryName() {
 		return repositoryName;
 	}	
