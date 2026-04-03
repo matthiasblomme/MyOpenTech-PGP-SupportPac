@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.util.Date;
@@ -1030,13 +1031,14 @@ public class PGPEncrypter {
     }
 
     /**
-     * Plain Text (UTF8) encryption
-     * @param plainText
-     * @param encKey
-     * @param signWithKey
-     * @param signKeyPass
-     * @return
-     * @throws Exception
+     * Encrypt plain text and return the encrypted result as a UTF-8 string.
+     * @param plainText the plain text to encrypt; must not be null
+     * @param encKey the recipient's public encryption key
+     * @param signWithKey the secret key used to sign the data, or {@code null} for encrypt-only
+     * @param signKeyPass the passphrase for the signing key; ignored if {@code signWithKey} is null
+     * @return the encrypted (and optionally signed) data as a UTF-8 string
+     * @throws IllegalArgumentException if plainText is null
+     * @throws Exception if encryption or signing fails
      */
     public static String encryptUTF8Text(String plainText,
     		PGPPublicKey encKey,
@@ -1044,8 +1046,12 @@ public class PGPEncrypter {
             String signKeyPass)
             throws Exception {
 
+    	if (plainText == null) {
+    		throw new IllegalArgumentException("plainText must not be null");
+    	}
+
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        ByteArrayInputStream bIn = new ByteArrayInputStream(plainText.getBytes("UTF8"));
+        ByteArrayInputStream bIn = new ByteArrayInputStream(plainText.getBytes(StandardCharsets.UTF_8));
 
         encrypt(bIn, bOut, encKey, signWithKey, signKeyPass);
         byte[] data = bOut.toByteArray();
@@ -1053,7 +1059,7 @@ public class PGPEncrypter {
         bIn.close();
         bOut.close();
 
-        return new String(data, "UTF8");
+        return new String(data, StandardCharsets.UTF_8);
     }
     
     /**

@@ -130,18 +130,34 @@ public class PGPEnvironment {
 		return pgpKeyring;
 	}
 	
+	/**
+	 * Return the default hash (digest) algorithm name.
+	 * @return default hash algorithm (e.g. "SHA1")
+	 */
 	public static String getDefaultHashAlgorithm() {
 		return defaultHashAlgorithm;
 	}
 
+	/**
+	 * Return the default symmetric cipher algorithm name.
+	 * @return default cipher algorithm (e.g. "CAST5")
+	 */
 	public static String getDefaultCipherAlgorithm() {
 		return defaultCipherAlgorithm;
 	}
 
+	/**
+	 * Return the default compression algorithm name.
+	 * @return default compression algorithm (e.g. "ZIP")
+	 */
 	public static String getDefaultCompressionAlgorithm() {
 		return defaultCompressionAlgorithm;
 	}
 
+	/**
+	 * Return the name of the default key repository.
+	 * @return default key repository name
+	 */
 	public static String getDefaultKeyRepository() {
 		return defaultKeyRepository;
 	}

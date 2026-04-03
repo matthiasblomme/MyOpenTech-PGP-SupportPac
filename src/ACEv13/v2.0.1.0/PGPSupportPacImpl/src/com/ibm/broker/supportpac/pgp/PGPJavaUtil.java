@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
@@ -213,12 +214,16 @@ public class PGPJavaUtil {
 	}
 
 	/**
-	 * Create temporary data file
-	 * @param data
-	 * @param tempDirectory
-	 * @return
+	 * Write data to a randomly-named temporary file in the given directory.
+	 * @param data the bytes to write
+	 * @param tempDirectory directory in which to create the temporary file
+	 * @param isEncrypted if {@code true}, appends {@code .asc} to the generated filename
+	 * @return absolute path of the created file
+	 * @throws IllegalArgumentException if tempDirectory is null, empty, or contains path traversal sequences
+	 * @throws Exception if the file cannot be created or written
 	 */
 	public static String createFile(byte[] data, String tempDirectory, boolean isEncrypted) throws Exception {
+		validateFilePath(tempDirectory, "tempDirectory");
 
 		String dataFile = tempDirectory + "/" + getRandomFileName();
 
@@ -234,13 +239,15 @@ public class PGPJavaUtil {
 	}
 	
 	/**
-	 * Write ASCII armored data into specified file
-	 * @param data
-	 * @param fileName
-	 * @param asciiAromor
-	 * @throws Exception
+	 * Write data to the specified file, optionally ASCII-armoring it.
+	 * @param data the bytes to write
+	 * @param fileName absolute path of the output file
+	 * @param asciiAromor if {@code true}, wraps output in an ASCII armor stream
+	 * @throws IllegalArgumentException if fileName is null, empty, or contains path traversal sequences
+	 * @throws Exception if the file cannot be written
 	 */
 	public static void writeFile(byte[] data, String fileName, boolean asciiAromor) throws Exception {
+		validateFilePath(fileName, "fileName");
 	       File outFile = new File(fileName);
 	       
 	       try (FileOutputStream fout = new FileOutputStream(outFile)) {
@@ -275,14 +282,36 @@ public class PGPJavaUtil {
     }
 
 	/**
-	 * Read File and return byte[]
-	 * @param file
-	 * @return
-	 * @throws Exception
+	 * Read a file and return its contents as a byte array.
+	 * @param file absolute path to the file to read
+	 * @return file contents as {@code byte[]}
+	 * @throws IllegalArgumentException if the path is null, empty, or contains path traversal sequences
+	 * @throws Exception if the file cannot be read
 	 */
 	public static byte[] readFile(String file) throws Exception {
+		validateFilePath(file, "file");
 		try (FileInputStream fis = new FileInputStream(new File(file))) {
 			return fis.readAllBytes();
+		}
+	}
+
+	/**
+	 * Validate a file path: checks it is non-null/non-empty and contains no path traversal sequences.
+	 * @param path the file path to validate
+	 * @param paramName parameter name used in the exception message
+	 * @throws IllegalArgumentException if the path is null, empty, or contains {@code ..}
+	 */
+	private static void validateFilePath(String path, String paramName) {
+		if (path == null || path.trim().isEmpty()) {
+			throw new IllegalArgumentException(paramName + " must not be null or empty");
+		}
+		try {
+			String canonical = new File(path).getCanonicalPath();
+			if (canonical.contains("..")) {
+				throw new IllegalArgumentException(paramName + " must not contain path traversal sequences: " + path);
+			}
+		} catch (IOException e) {
+			throw new IllegalArgumentException(paramName + " is not a valid file path: " + path);
 		}
 	}
 
@@ -301,21 +330,13 @@ public class PGPJavaUtil {
 	 * @return
 	 */
 	public static int getCompressionAlgorithm(String algorithm) throws Exception {
-
-		algorithm = algorithm.trim();
-
-		if("UNCOMPRESSED".equalsIgnoreCase(algorithm)){
-			return CompressionAlgorithmTags.UNCOMPRESSED;
-		} else if("ZIP".equalsIgnoreCase(algorithm)){
-			return CompressionAlgorithmTags.ZIP;
-		} else if("BZIP2".equalsIgnoreCase(algorithm)){
-			return CompressionAlgorithmTags.BZIP2;
-		} else if("ZLIB".equalsIgnoreCase(algorithm)){
-			return CompressionAlgorithmTags.ZLIB;
-		} else {
-			throw new NoSuchAlgorithmException("Compression Algorithm not supported :"+algorithm);
-		}
-
+		return switch (algorithm.trim().toUpperCase()) {
+			case "UNCOMPRESSED" -> CompressionAlgorithmTags.UNCOMPRESSED;
+			case "ZIP"          -> CompressionAlgorithmTags.ZIP;
+			case "BZIP2"        -> CompressionAlgorithmTags.BZIP2;
+			case "ZLIB"         -> CompressionAlgorithmTags.ZLIB;
+			default -> throw new NoSuchAlgorithmException("Compression Algorithm not supported :" + algorithm);
+		};
 	}
 
 	/**
@@ -326,66 +347,38 @@ public class PGPJavaUtil {
 	 */
 	@SuppressWarnings("deprecation")
 	public static int getPublicKeyAlgorithmTags(String algorithm) throws Exception {
-
-		algorithm = algorithm.trim();
-
-		if("RSA_GENERAL".equalsIgnoreCase(algorithm)){
-			return PublicKeyAlgorithmTags.RSA_GENERAL;
-		} else if("RSA_ENCRYPT".equalsIgnoreCase(algorithm)){
-			return PublicKeyAlgorithmTags.RSA_ENCRYPT;
-		} else if("RSA_SIGN".equalsIgnoreCase(algorithm)){
-			return PublicKeyAlgorithmTags.RSA_SIGN;
-		} else if("ELGAMAL_ENCRYPT".equalsIgnoreCase(algorithm)){
-			return PublicKeyAlgorithmTags.ELGAMAL_ENCRYPT;
-		} else if("DSA".equalsIgnoreCase(algorithm)){
-			return PublicKeyAlgorithmTags.DSA;
-		} else if("EC".equalsIgnoreCase(algorithm)){
-			return PublicKeyAlgorithmTags.EC;
-		} else if("ECDH".equalsIgnoreCase(algorithm)){
-			return PublicKeyAlgorithmTags.ECDH;
-		} else if("ECDSA".equalsIgnoreCase(algorithm)){
-			return PublicKeyAlgorithmTags.ECDSA;
-		} else if("DIFFIE_HELLMAN".equalsIgnoreCase(algorithm)){
-			return PublicKeyAlgorithmTags.DIFFIE_HELLMAN;
-		} else {
-			throw new NoSuchAlgorithmException("PublicKey Algorithm not supported :"+algorithm);
-		}
-
+		return switch (algorithm.trim().toUpperCase()) {
+			case "RSA_GENERAL"    -> PublicKeyAlgorithmTags.RSA_GENERAL;
+			case "RSA_ENCRYPT"    -> PublicKeyAlgorithmTags.RSA_ENCRYPT;
+			case "RSA_SIGN"       -> PublicKeyAlgorithmTags.RSA_SIGN;
+			case "ELGAMAL_ENCRYPT"-> PublicKeyAlgorithmTags.ELGAMAL_ENCRYPT;
+			case "DSA"            -> PublicKeyAlgorithmTags.DSA;
+			case "EC"             -> PublicKeyAlgorithmTags.EC;
+			case "ECDH"           -> PublicKeyAlgorithmTags.ECDH;
+			case "ECDSA"          -> PublicKeyAlgorithmTags.ECDSA;
+			case "DIFFIE_HELLMAN" -> PublicKeyAlgorithmTags.DIFFIE_HELLMAN;
+			default -> throw new NoSuchAlgorithmException("PublicKey Algorithm not supported :" + algorithm);
+		};
 	}
 
 	/*
 	 * Get Hash Algorithm
 	 */
 	public static int getHashAlgorithm(String algorithm) throws Exception {
-
-		algorithm = algorithm.trim();
-
-		if("MD5".equalsIgnoreCase(algorithm)){
-			return HashAlgorithmTags.MD5;
-		} else if("SHA1".equalsIgnoreCase(algorithm)){
-			return HashAlgorithmTags.SHA1;
-		} else if("RIPEMD160".equalsIgnoreCase(algorithm)){
-			return HashAlgorithmTags.RIPEMD160;
-		} else if("DOUBLE_SHA".equalsIgnoreCase(algorithm)){
-			return HashAlgorithmTags.DOUBLE_SHA;
-		} else if("MD2".equalsIgnoreCase(algorithm)){
-			return HashAlgorithmTags.MD2;
-		} else if("TIGER_192".equalsIgnoreCase(algorithm)){
-			return HashAlgorithmTags.TIGER_192;
-		} else if("HAVAL_5_160".equalsIgnoreCase(algorithm)){
-			return HashAlgorithmTags.HAVAL_5_160;
-		} else if("SHA256".equalsIgnoreCase(algorithm)){
-			return HashAlgorithmTags.SHA256;
-		} else if("SHA384".equalsIgnoreCase(algorithm)){
-			return HashAlgorithmTags.SHA384;
-		} else if("SHA512".equalsIgnoreCase(algorithm)){
-			return HashAlgorithmTags.SHA512;
-		} else if("SHA224".equalsIgnoreCase(algorithm)){
-			return HashAlgorithmTags.SHA224;
-		} else {
-			throw new NoSuchAlgorithmException("Hash Algorithm not supported :"+algorithm);
-		}
-
+		return switch (algorithm.trim().toUpperCase()) {
+			case "MD5"        -> HashAlgorithmTags.MD5;
+			case "SHA1"       -> HashAlgorithmTags.SHA1;
+			case "RIPEMD160"  -> HashAlgorithmTags.RIPEMD160;
+			case "DOUBLE_SHA" -> HashAlgorithmTags.DOUBLE_SHA;
+			case "MD2"        -> HashAlgorithmTags.MD2;
+			case "TIGER_192"  -> HashAlgorithmTags.TIGER_192;
+			case "HAVAL_5_160"-> HashAlgorithmTags.HAVAL_5_160;
+			case "SHA256"     -> HashAlgorithmTags.SHA256;
+			case "SHA384"     -> HashAlgorithmTags.SHA384;
+			case "SHA512"     -> HashAlgorithmTags.SHA512;
+			case "SHA224"     -> HashAlgorithmTags.SHA224;
+			default -> throw new NoSuchAlgorithmException("Hash Algorithm not supported :" + algorithm);
+		};
 	}
 
 	/**
@@ -395,41 +388,23 @@ public class PGPJavaUtil {
 	 * @throws Exception
 	 */
 	public static int getCipherAlgorithm(String algorithm) throws Exception {
-
-		algorithm = algorithm.trim();
-
-		if("NULL".equalsIgnoreCase(algorithm)){ // Plain text or unencrypted data
-			return PGPEncryptedData.NULL;
-		} else if("IDEA".equalsIgnoreCase(algorithm)){ // IDEA [IDEA]
-			return PGPEncryptedData.IDEA;
-		} else if("TRIPLE_DES".equalsIgnoreCase(algorithm)){ // Triple-DES (DES-EDE, as per spec -168 bit key derived from 192)
-			return PGPEncryptedData.TRIPLE_DES;
-		} else if("CAST5".equalsIgnoreCase(algorithm)){ // CAST5 (128 bit key, as per RFC 2144)
-			return PGPEncryptedData.CAST5;
-		} else if("BLOWFISH".equalsIgnoreCase(algorithm)){ // Blowfish (128 bit key, 16 rounds) [BLOWFISH]
-			return PGPEncryptedData.BLOWFISH;
-		} else if("SAFER".equalsIgnoreCase(algorithm)){ // SAFER-SK128 (13 rounds) [SAFER]
-			return PGPEncryptedData.SAFER;
-		} else if("DES".equalsIgnoreCase(algorithm)){ // Reserved for DES/SK
-			return PGPEncryptedData.DES;
-		} else if("AES_128".equalsIgnoreCase(algorithm)){ // Reserved for AES with 128-bit key
-			return PGPEncryptedData.AES_128;
-		} else if("AES_192".equalsIgnoreCase(algorithm)){ // Reserved for AES with 192-bit key
-			return PGPEncryptedData.AES_192;
-		} else if("AES_256".equalsIgnoreCase(algorithm)){ // Reserved for AES with 256-bit key
-			return PGPEncryptedData.AES_256;
-		} else if("TWOFISH".equalsIgnoreCase(algorithm)){ // Reserved for Twofish
-			return PGPEncryptedData.TWOFISH;
-		} else if("CAMELLIA_128".equalsIgnoreCase(algorithm)){ // Reserved for CAMELLIA_128
-			return PGPEncryptedData.CAMELLIA_128;
-		} else if("CAMELLIA_192".equalsIgnoreCase(algorithm)){ // Reserved for CAMELLIA_192
-			return PGPEncryptedData.CAMELLIA_192;
-		} else if("CAMELLIA_256".equalsIgnoreCase(algorithm)){ // Reserved for Twofish
-			return PGPEncryptedData.CAMELLIA_256;
-		} else {
-			throw new NoSuchAlgorithmException("Cipher Algorithm not supported :"+algorithm);
-		}
-
+		return switch (algorithm.trim().toUpperCase()) {
+			case "NULL"        -> PGPEncryptedData.NULL;       // Plain text or unencrypted data
+			case "IDEA"        -> PGPEncryptedData.IDEA;       // IDEA [IDEA]
+			case "TRIPLE_DES"  -> PGPEncryptedData.TRIPLE_DES; // Triple-DES (DES-EDE, 168 bit key derived from 192)
+			case "CAST5"       -> PGPEncryptedData.CAST5;      // CAST5 (128 bit key, as per RFC 2144)
+			case "BLOWFISH"    -> PGPEncryptedData.BLOWFISH;   // Blowfish (128 bit key, 16 rounds) [BLOWFISH]
+			case "SAFER"       -> PGPEncryptedData.SAFER;      // SAFER-SK128 (13 rounds) [SAFER]
+			case "DES"         -> PGPEncryptedData.DES;        // Reserved for DES/SK
+			case "AES_128"     -> PGPEncryptedData.AES_128;    // AES with 128-bit key
+			case "AES_192"     -> PGPEncryptedData.AES_192;    // AES with 192-bit key
+			case "AES_256"     -> PGPEncryptedData.AES_256;    // AES with 256-bit key
+			case "TWOFISH"     -> PGPEncryptedData.TWOFISH;    // Twofish
+			case "CAMELLIA_128"-> PGPEncryptedData.CAMELLIA_128;
+			case "CAMELLIA_192"-> PGPEncryptedData.CAMELLIA_192;
+			case "CAMELLIA_256"-> PGPEncryptedData.CAMELLIA_256;
+			default -> throw new NoSuchAlgorithmException("Cipher Algorithm not supported :" + algorithm);
+		};
 	}
 
 	/**
@@ -478,7 +453,7 @@ public class PGPJavaUtil {
 		String[] list = data.split("\n");
 		int len = list.length;
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		boolean first = true;
 
 		for (int i = 0; i < len; i++) {
