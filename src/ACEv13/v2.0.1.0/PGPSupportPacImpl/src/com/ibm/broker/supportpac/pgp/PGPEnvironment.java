@@ -85,7 +85,7 @@ public class PGPEnvironment {
 			return "";
 		}
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		Iterator iterator = pgpKeyringMap.keySet().iterator();
 		
 		while (iterator.hasNext()) {

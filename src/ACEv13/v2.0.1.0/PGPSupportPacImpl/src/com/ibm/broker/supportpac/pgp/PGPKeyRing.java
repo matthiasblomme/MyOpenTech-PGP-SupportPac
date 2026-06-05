@@ -562,7 +562,7 @@ public class PGPKeyRing {
 	 */
 	public String printPrivateKeys(){
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		Collection<PGPSecretKeyRingWrapper> privateKeyRing = getPrivateKeys();
 	   	Iterator<PGPSecretKeyRingWrapper> privateKeys = privateKeyRing.iterator();
 	   	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
@@ -581,7 +581,7 @@ public class PGPKeyRing {
 	 */
 	public String printPrivateSubKeys(){
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		Collection<PGPSecretKeyRingWrapper> privateKeyRing = getPrivateKeys();
 	   	Iterator<PGPSecretKeyRingWrapper> privateKeys = privateKeyRing.iterator();
 	   	PGPSecretKeyRingWrapper pgpSecretKeyRingWrapper;
@@ -607,7 +607,7 @@ public class PGPKeyRing {
 	 */
 	public String printPublicKeys(){
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		Collection<PGPPublicKeyRingWrapper> publicKeyRing = getPublicKeys();
 	   	Iterator<PGPPublicKeyRingWrapper> publicKeys = publicKeyRing.iterator();
 	   	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
@@ -626,7 +626,7 @@ public class PGPKeyRing {
 	 */
 	public String printPublicSubKeys(){
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		Collection<PGPPublicKeyRingWrapper> publicKeyRing = getPublicKeys();
 	   	Iterator<PGPPublicKeyRingWrapper> publicKeys = publicKeyRing.iterator();
 	   	PGPPublicKeyRingWrapper pgpPublicKeyRingWrapper;
