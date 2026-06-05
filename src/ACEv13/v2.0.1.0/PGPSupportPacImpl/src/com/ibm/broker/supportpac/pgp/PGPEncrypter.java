@@ -34,25 +34,56 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodGenerator;
 
 /**
- * PGP Encryption and Signature generation.
- * @version 1.0
+ * Provides PGP encryption and digital signature generation functionality using Bouncy Castle library.
+ *
+ * <p>This class handles encryption of data using PGP public keys and can optionally sign the data
+ * with a private key. It supports various encryption algorithms, compression methods, and output formats.</p>
+ *
+ * <p><b>Key Features:</b></p>
+ * <ul>
+ *   <li>Encrypt data with PGP public keys</li>
+ *   <li>Generate digital signatures with private keys</li>
+ *   <li>Support for multiple encryption algorithms (AES, 3DES, CAST5, etc.)</li>
+ *   <li>Configurable compression (ZIP, ZLIB, BZIP2)</li>
+ *   <li>ASCII armor output support</li>
+ *   <li>Integrity protection</li>
+ * </ul>
+ *
+ * <p><b>Example Usage:</b></p>
+ * <pre>{@code
+ * // Simple encryption
+ * byte[] plainData = "Hello World".getBytes();
+ * byte[] encrypted = PGPEncrypter.encrypt(plainData, "recipient@example.com");
+ *
+ * // Encryption with signature
+ * byte[] signedAndEncrypted = PGPEncrypter.signAndEncrypt(
+ *     plainData,
+ *     "recipient@example.com",
+ *     "sender@example.com",
+ *     "senderPassphrase"
+ * );
+ * }</pre>
+ *
+ * @version 2.0.1.0
  * @author Dipak K Pal (IBM)
- * <br><br>
- * <b>Description:</b>
- * PGP Encryption and Signature generation.
- * Updated on Jul 28 2016: EncryptionKey/PGPPublicKey can be set through Local Environment which will have highest preference
+ * @since 1.0
  */
 public class PGPEncrypter {
 
     private final static int BUFFER_SIZE = 1 << 16;
 
     /**
-     * Encrypt byte[] with specified Key Repository
-     * @param bIn - Input data byte[]
-     * @param pgpEncryptionKey - PGP Encryption key (Recipient' Public key) User Id
-     * @param pgpKeyRepositoryName - PGP Repository Name
-     * @return byte[]
-     * @throws PGPException
+     * Encrypts data using a PGP public key from a specified key repository.
+     *
+     * <p>This method encrypts the input data with the recipient's public key found in the
+     * specified key repository. The encrypted data can only be decrypted by the recipient
+     * who holds the corresponding private key.</p>
+     *
+     * @param bIn the input data to encrypt
+     * @param pgpEncryptionKey the recipient's public key user ID (e.g., email address)
+     * @param pgpKeyRepositoryName the name of the key repository containing the public key
+     * @return the encrypted data as a byte array
+     * @throws PGPException if encryption fails or the public key cannot be found
      */
     public static byte[] encrypt(byte[] bIn, String pgpEncryptionKey, String pgpKeyRepositoryName) throws PGPException {
 
@@ -74,11 +105,16 @@ public class PGPEncrypter {
     }
     
     /**
-     * Encrypt byte[] with default Key Repository
-     * @param bIn - Input data byte[]
-     * @param pgpEncryptionKey - PGP Encryption key (Recipient' Public key) User Id
-     * @return byte[]
-     * @throws PGPException
+     * Encrypts data using a PGP public key from the default key repository.
+     *
+     * <p>This method encrypts the input data with the recipient's public key found in the
+     * default key repository. The encrypted data can only be decrypted by the recipient
+     * who holds the corresponding private key.</p>
+     *
+     * @param bIn the input data to encrypt
+     * @param pgpEncryptionKey the recipient's public key user ID (e.g., email address)
+     * @return the encrypted data as a byte array
+     * @throws PGPException if encryption fails or the public key cannot be found
      */
     public static byte[] encrypt(byte[] bIn, String pgpEncryptionKey) throws PGPException {
 

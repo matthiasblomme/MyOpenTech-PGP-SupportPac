@@ -29,21 +29,52 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyDataDecryptorFactoryBuilder;
 
 /**
- * Decryption and Signature validation.
- * @version 1.0
+ * Provides PGP decryption and signature validation functionality using Bouncy Castle library.
+ *
+ * <p>This class handles decryption of PGP-encrypted data and validates digital signatures.
+ * It supports both text and stream-based decryption operations with configurable key repositories.</p>
+ *
+ * <p><b>Key Features:</b></p>
+ * <ul>
+ *   <li>Decrypt PGP-encrypted text and binary data</li>
+ *   <li>Validate PGP signatures</li>
+ *   <li>Support for multiple key repositories</li>
+ *   <li>Automatic key selection based on encrypted data</li>
+ * </ul>
+ *
+ * <p><b>Example Usage:</b></p>
+ * <pre>{@code
+ * // Decrypt UTF-8 text
+ * String encryptedText = "-----BEGIN PGP MESSAGE-----...";
+ * PGPDecryptionResult result = PGPDecrypter.decryptUTF8Text(encryptedText, "passphrase");
+ * String plainText = result.getDecryptedText();
+ *
+ * // Decrypt stream with custom key repository
+ * try (InputStream in = new FileInputStream("encrypted.pgp");
+ *      OutputStream out = new FileOutputStream("decrypted.txt")) {
+ *     PGPDecryptionResult result = PGPDecrypter.decrypt(in, out, "passphrase", "myKeyRepo");
+ *     if (result.isSignatureValid()) {
+ *         System.out.println("Signature verified!");
+ *     }
+ * }
+ * }</pre>
+ *
+ * @version 2.0.1.0
  * @author Dipak K Pal (IBM)
- * <br><br>
- * <b>Description:</b>
- * Decryption and Signature validation.
+ * @since 1.0
  */
 public class PGPDecrypter {
 
 	/**
-	 * Decrypt Plain Text
-	 * @param cipherText - encrypted text
-	 * @param passPhrase - PGP Secret key passphrase
-	 * @return PGPDecryptionResult
-	 * @throws PGPException
+	 * Decrypts PGP-encrypted UTF-8 text using the default key repository.
+	 *
+	 * <p>This method decrypts text that has been encrypted with PGP and returns the result
+	 * along with signature validation information if the message was signed.</p>
+	 *
+	 * @param cipherText the PGP-encrypted text to decrypt (must not be null or empty)
+	 * @param passPhrase the passphrase for the private key used for decryption (use empty string if no passphrase)
+	 * @return a {@link PGPDecryptionResult} containing the decrypted text and signature validation status
+	 * @throws PGPException if decryption fails, the cipherText is null/empty, or the key repository is not configured
 	 */
     public static PGPDecryptionResult decryptUTF8Text(String cipherText, String passPhrase) throws PGPException {
     	if (cipherText == null || cipherText.isEmpty()) {
@@ -70,12 +101,17 @@ public class PGPDecrypter {
     }
 
     /**
-     * Decryption/Signature validation with specified key repository
-     * @param in
-     * @param passPhrase
-     * @param out
-     * @return PGPDecryptionResult
-     * @throws PGPException
+     * Decrypts PGP-encrypted data from an input stream using a specified key repository.
+     *
+     * <p>This method reads encrypted data from the input stream, decrypts it using the private key
+     * from the specified repository, and writes the decrypted data to the output stream.</p>
+     *
+     * @param in the input stream containing PGP-encrypted data
+     * @param out the output stream where decrypted data will be written
+     * @param passPhrase the passphrase for the private key (use empty string if no passphrase)
+     * @param pgpKeyRepositoryName the name of the key repository to use for decryption
+     * @return a {@link PGPDecryptionResult} containing decryption status and signature validation information
+     * @throws PGPException if decryption fails or the specified key repository cannot be found
      */
     public static PGPDecryptionResult decrypt(InputStream in, OutputStream out, String passPhrase, String pgpKeyRepositoryName)
 	throws PGPException {
@@ -99,12 +135,16 @@ public class PGPDecrypter {
     }
     
     /**
-     * Decryption/Signature validation with default key repository
-     * @param in
-     * @param out
-     * @param passPhrase
-     * @return PGPDecryptionResult
-     * @throws PGPException
+     * Decrypts PGP-encrypted data from an input stream using the default key repository.
+     *
+     * <p>This method reads encrypted data from the input stream, decrypts it using the private key
+     * from the default repository, and writes the decrypted data to the output stream.</p>
+     *
+     * @param in the input stream containing PGP-encrypted data
+     * @param out the output stream where decrypted data will be written
+     * @param passPhrase the passphrase for the private key (use empty string if no passphrase)
+     * @return a {@link PGPDecryptionResult} containing decryption status and signature validation information
+     * @throws PGPException if decryption fails or the default key repository is not configured
      */
     public static PGPDecryptionResult decrypt(InputStream in, OutputStream out, String passPhrase) throws PGPException {
 
@@ -127,11 +167,17 @@ public class PGPDecrypter {
     }
 
     /**
-     * Decrypt/Validate Signature
-     * @param in - Input Stream
-     * @param out - Output stream
-     * @return PGPDecryptionResult
-     * @throws Exception
+     * Internal method to decrypt PGP-encrypted data and validate signatures.
+     *
+     * <p>This private method performs the actual decryption work, handling compressed data,
+     * literal data extraction, and signature validation if present.</p>
+     *
+     * @param in the input stream containing PGP-encrypted data
+     * @param out the output stream where decrypted data will be written
+     * @param passwd the passphrase as a character array for the private key
+     * @param pgpKeyRing the key ring containing the private and public keys
+     * @return a {@link PGPDecryptionResult} containing decryption status and signature validation information
+     * @throws Exception if any error occurs during decryption or signature validation
      */
     private static PGPDecryptionResult decrypt(InputStream in, OutputStream out, char[] passwd, PGPKeyRing pgpKeyRing) throws Exception {
     	
@@ -325,13 +371,16 @@ public class PGPDecrypter {
     }
 
     /**
-     * Process Literal Data
-     * @param ld
-     * @param out
-     * @param sig
-     * @return
-     * @throws IOException
-     * @throws SignatureException
+     * Processes PGP literal data by extracting the content and optionally updating a signature.
+     *
+     * <p>This internal method reads the decrypted literal data byte-by-byte, writes it to the
+     * output stream, and updates the signature verification if a signature is present.</p>
+     *
+     * @param ld the PGP literal data containing the decrypted content
+     * @param out the output stream where the literal data will be written
+     * @param sig the signature wrapper for verification, or null if no signature validation is needed
+     * @throws IOException if an I/O error occurs while reading or writing data
+     * @throws SignatureException if an error occurs while updating the signature
      */
     private static void processLiteralData(PGPLiteralData ld, OutputStream out, PGPSignatureWrapper sig) throws IOException, SignatureException {
         InputStream unc = ld.getInputStream();
