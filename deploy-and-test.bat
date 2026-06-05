@@ -13,7 +13,7 @@ REM Set paths
 set "WORKSPACE_DIR=C:\Users\Bmatt\IBM\ACET13\workspacePgp"
 set "TEST_SERVER=%WORKSPACE_DIR%\TEST_SERVER"
 set "BACKUP_DIR=%WORKSPACE_DIR%\backup-original-jars"
-set "ACE_BASE=C:\Program Files\IBM\ACE\13.0.6.0"
+set "ACE_BASE=C:\Program Files\IBM\ACE\13.0.7.0"
 
 REM Determine MQSI paths
 REM For standalone Integration Server, shared-classes is in the work directory

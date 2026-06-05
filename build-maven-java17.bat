@@ -8,7 +8,7 @@ echo ========================================
 echo.
 
 REM Set ACE environment
-set "ACE_BASE=C:\Program Files\IBM\ACE\13.0.6.0"
+set "ACE_BASE=C:\Program Files\IBM\ACE\13.0.7.0"
 echo Setting up ACE environment...
 call "%ACE_BASE%\server\bin\mqsiprofile.cmd"
 
