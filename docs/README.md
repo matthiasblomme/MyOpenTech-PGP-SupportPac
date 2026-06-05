@@ -5,6 +5,7 @@ This directory contains documentation for the PGP SupportPac project.
 ## Current Documentation
 
 ### Active Documents
+- **[CURRENT_ROADMAP.md](CURRENT_ROADMAP.md)** - Current development roadmap and prioritized tasks
 - **[ACE_13.0.7.0_VALIDATION_REPORT.md](ACE_13.0.7.0_VALIDATION_REPORT.md)** - Current validation testing for ACE v13.0.7.0
 - **[PASSPHRASE_CURRENT_SETUP.md](PASSPHRASE_CURRENT_SETUP.md)** - Passphrase configuration documentation
 
@@ -44,9 +45,10 @@ Historical documentation has been archived with the `archive-` prefix:
 ## Quick Links
 
 ### For Developers
-1. Review [ACE_13.0.7.0_VALIDATION_REPORT.md](ACE_13.0.7.0_VALIDATION_REPORT.md) for current testing status
-2. Check [PASSPHRASE_CURRENT_SETUP.md](PASSPHRASE_CURRENT_SETUP.md) for configuration details
-3. See archived docs for historical context
+1. Review [CURRENT_ROADMAP.md](CURRENT_ROADMAP.md) for planned work and priorities
+2. Check [ACE_13.0.7.0_VALIDATION_REPORT.md](ACE_13.0.7.0_VALIDATION_REPORT.md) for current testing status
+3. See [PASSPHRASE_CURRENT_SETUP.md](PASSPHRASE_CURRENT_SETUP.md) for configuration details
+4. Review archived docs for historical context
 
 ### For Operations
 1. Use build scripts in project root:
