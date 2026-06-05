@@ -2,7 +2,7 @@
 
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![Java 17](https://img.shields.io/badge/Java-17-orange.svg)](https://openjdk.org/projects/jdk/17/)
-[![IBM ACE](https://img.shields.io/badge/IBM%20ACE-13.0.6.0+-blue.svg)](https://www.ibm.com/products/app-connect)
+[![IBM ACE](https://img.shields.io/badge/IBM%20ACE-13.0.7.0-blue.svg)](https://www.ibm.com/products/app-connect)
 
 > **⚠️ SOURCE CODE REPOSITORY**  
 > This repository contains the **source code** for the PGP SupportPac.  
@@ -22,7 +22,7 @@ PGP SupportPac provides application-layer security for IBM App Connect Enterpris
 ✅ **Centralized Configuration** - UserDefined Configurable Service for key repositories and default parameters  
 ✅ **Flexible Operations** - Support for both message and file encryption/decryption  
 ✅ **Wide Algorithm Support** - Multiple hash, cipher, and compression algorithms  
-✅ **Java 17 Modernized** - Updated for IBM ACE v13.0.6.0+ with modern Java features
+✅ **Java 17 Modernized** - Updated for IBM ACE v13.0.7.0 with modern Java features
 
 ---
 
@@ -30,7 +30,7 @@ PGP SupportPac provides application-layer security for IBM App Connect Enterpris
 
 ### Prerequisites
 
-- **IBM ACE v13.0.6.0 or later**
+- **IBM ACE v13.0.7.0** (validated) or v13.0.6.0+
 - **Java 17** (included with IBM ACE)
 - **Bouncy Castle 1.81** libraries (jdk18on)
 
@@ -70,7 +70,7 @@ Use the standard build script for most development environments:
 1. **Ensure ACE environment is set up:**
    ```bash
    # Windows - Run from ACE Command Console or after calling mqsiprofile.cmd
-   call "C:\Program Files\IBM\ACE\13.0.6.0\server\bin\mqsiprofile.cmd"
+   call "C:\Program Files\IBM\ACE\13.0.7.0\server\bin\mqsiprofile.cmd"
    ```
 
 2. **Build with Maven:**
@@ -170,9 +170,9 @@ PGP SupportPac
 - **Bouncy Castle PGP** (bcpg-jdk18on-1.81.jar)
 - **Bouncy Castle Provider** (bcprov-jdk18on-1.81.jar)
 - **Bouncy Castle Utilities** (bcutil-jdk18on-1.81.jar)
-- **IBM ACE Runtime** (v13.0.6.0+)
+- **IBM ACE Runtime** (v13.0.7.0 validated, v13.0.6.0+ supported)
 
-> **Note:** Bouncy Castle 1.81 is used to match the version included in IBM ACE v13.0.6.0 containers, avoiding class loading conflicts during deployment.
+> **Note:** Bouncy Castle 1.81 is used to match the version included in IBM ACE v13.0.7.0 containers, avoiding class loading conflicts during deployment.
 
 ---
 

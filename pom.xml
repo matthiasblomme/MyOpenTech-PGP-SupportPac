@@ -21,7 +21,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- IBM ACE Installation Path -->
-        <ace.home>C:\Program Files\IBM\ACE\13.0.6.0</ace.home>
+        <ace.home>C:\Program Files\IBM\ACE\13.0.7.0</ace.home>
 
         <!-- Bouncy Castle Version -->
         <bouncycastle.version>1.81</bouncycastle.version>
