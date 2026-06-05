@@ -86,22 +86,33 @@ public class PGPEncrypter {
      * @throws PGPException if encryption fails or the public key cannot be found
      */
     public static byte[] encrypt(byte[] bIn, String pgpEncryptionKey, String pgpKeyRepositoryName) throws PGPException {
+  
+  // Input validation
+  if (bIn == null || bIn.length == 0) {
+   throw new PGPException("Input data must not be null or empty");
+  }
+  if (pgpEncryptionKey == null || pgpEncryptionKey.trim().isEmpty()) {
+   throw new PGPException("Encryption key user ID must not be null or empty");
+  }
+  if (pgpKeyRepositoryName == null || pgpKeyRepositoryName.trim().isEmpty()) {
+   throw new PGPException("Key repository name must not be null or empty");
+  }
 
     	try {
     		// Get PGP Keyring
     		PGPKeyRing pgpKeyRing = PGPEnvironment.getPGPKeyRing(pgpKeyRepositoryName);
     		
     		// Find PGP Encryption Key
-			PGPPublicKey encKey = searchPGPPublicKey(pgpKeyRing, pgpEncryptionKey);
+  PGPPublicKey encKey = searchPGPPublicKey(pgpKeyRing, pgpEncryptionKey);
 
-			if(encKey == null){
-				throw new RuntimeException("PGP Public Key (Encryption Key) not found: "+pgpEncryptionKey);
-			}
+  if(encKey == null){
+   throw new RuntimeException("PGP Public Key (Encryption Key) not found: "+pgpEncryptionKey);
+  }
 
-			return encrypt(bIn, encKey, null, "");
-		} catch (Exception e) {
-			throw new PGPException(e.getMessage());
-		}
+  return encrypt(bIn, encKey, null, "");
+ } catch (Exception e) {
+  throw new PGPException(e.getMessage());
+ }
     }
     
     /**
@@ -117,22 +128,30 @@ public class PGPEncrypter {
      * @throws PGPException if encryption fails or the public key cannot be found
      */
     public static byte[] encrypt(byte[] bIn, String pgpEncryptionKey) throws PGPException {
+  
+  // Input validation
+  if (bIn == null || bIn.length == 0) {
+   throw new PGPException("Input data must not be null or empty");
+  }
+  if (pgpEncryptionKey == null || pgpEncryptionKey.trim().isEmpty()) {
+   throw new PGPException("Encryption key user ID must not be null or empty");
+  }
 
     	try {
     		// Get PGP Keyring
     		PGPKeyRing pgpKeyRing = PGPEnvironment.getDefaultPGPKeyRing();
     		
     		// Find PGP Encryption Key
-			PGPPublicKey encKey = searchPGPPublicKey(pgpKeyRing, pgpEncryptionKey);
+  PGPPublicKey encKey = searchPGPPublicKey(pgpKeyRing, pgpEncryptionKey);
 
-			if(encKey == null){
-				throw new RuntimeException("PGP Public Key (Encryption Key) not found: "+pgpEncryptionKey);
-			}
+  if(encKey == null){
+   throw new RuntimeException("PGP Public Key (Encryption Key) not found: "+pgpEncryptionKey);
+  }
 
-			return encrypt(bIn, encKey, null, "");
-		} catch (Exception e) {
-			throw new PGPException(e.getMessage());
-		}
+  return encrypt(bIn, encKey, null, "");
+ } catch (Exception e) {
+  throw new PGPException(e.getMessage());
+ }
     }
     
     /**

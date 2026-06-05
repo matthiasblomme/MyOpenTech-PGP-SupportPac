@@ -114,9 +114,20 @@ public class PGPDecrypter {
      * @throws PGPException if decryption fails or the specified key repository cannot be found
      */
     public static PGPDecryptionResult decrypt(InputStream in, OutputStream out, String passPhrase, String pgpKeyRepositoryName)
-	throws PGPException {
+ throws PGPException {
+  
+  // Input validation
+  if (in == null) {
+   throw new PGPException("Input stream must not be null");
+  }
+  if (out == null) {
+   throw new PGPException("Output stream must not be null");
+  }
+  if (pgpKeyRepositoryName == null || pgpKeyRepositoryName.trim().isEmpty()) {
+   throw new PGPException("Key repository name must not be null or empty");
+  }
 
-    	PGPDecryptionResult decryptionRes = null;    	
+    	PGPDecryptionResult decryptionRes = null;
 
     	try {
     		// Get PGP Keyring
@@ -127,11 +138,11 @@ public class PGPDecrypter {
     		}
     		
     		char[] passwd = passPhrase.toCharArray();
-			decryptionRes = decrypt(in, out, passwd, pgpKeyRing);
-		} catch (Exception e) {
-			throw new PGPException(e.getMessage());
-		}
-		return decryptionRes;
+  decryptionRes = decrypt(in, out, passwd, pgpKeyRing);
+ } catch (Exception e) {
+  throw new PGPException(e.getMessage());
+ }
+ return decryptionRes;
     }
     
     /**
@@ -147,8 +158,16 @@ public class PGPDecrypter {
      * @throws PGPException if decryption fails or the default key repository is not configured
      */
     public static PGPDecryptionResult decrypt(InputStream in, OutputStream out, String passPhrase) throws PGPException {
+  
+  // Input validation
+  if (in == null) {
+   throw new PGPException("Input stream must not be null");
+  }
+  if (out == null) {
+   throw new PGPException("Output stream must not be null");
+  }
 
-    	PGPDecryptionResult decryptionRes = null;    	
+    	PGPDecryptionResult decryptionRes = null;
 
     	try {
     		// Get PGP Keyring
@@ -159,11 +178,11 @@ public class PGPDecrypter {
     		}
     		
     		char[] passwd = passPhrase.toCharArray();
-			decryptionRes = decrypt(in, out, passwd, pgpKeyRing);
-		} catch (Exception e) {
-			throw new PGPException(e.getMessage());
-		}
-		return decryptionRes;
+  decryptionRes = decrypt(in, out, passwd, pgpKeyRing);
+ } catch (Exception e) {
+  throw new PGPException(e.getMessage());
+ }
+ return decryptionRes;
     }
 
     /**

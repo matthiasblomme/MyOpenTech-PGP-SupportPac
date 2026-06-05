@@ -72,8 +72,13 @@ public class PGPEnvironment {
 	 * @throws PGPException if initialization fails or key files cannot be loaded
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void initialize(String pgpRepositoryName, String pgpPrivateKeyRepository, 
+	public static void initialize(String pgpRepositoryName, String pgpPrivateKeyRepository,
 			String pgpPublicKeyRepository, boolean overwrite) throws PGPException {
+		
+		// Input validation
+		if (pgpRepositoryName == null || pgpRepositoryName.trim().isEmpty()) {
+			throw new PGPException("Repository name must not be null or empty");
+		}
 
 		try {
 			synchronized (lock) {
