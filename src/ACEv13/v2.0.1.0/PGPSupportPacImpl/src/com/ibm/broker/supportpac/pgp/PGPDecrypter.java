@@ -179,11 +179,9 @@ public class PGPDecrypter {
 		while (encObjects.hasNext()) {
 		    // Find a key that matches our private key
 		    Object obj = encObjects.next();
-		    if (!(obj instanceof PGPPublicKeyEncryptedData)){
+		    if (!(obj instanceof PGPPublicKeyEncryptedData encData)){
 		        continue;
 		    }
-		    
-		    PGPPublicKeyEncryptedData encData = (PGPPublicKeyEncryptedData) obj;
 		    keyID = encData.getKeyID();		    
 		    secretKey = pgpKeyRing.getPrivateKeyByID(keyID);
 		    
@@ -243,19 +241,19 @@ public class PGPDecrypter {
 		    isCompressed = true;
 		}
 
-		if (message instanceof PGPLiteralData) {
+		if (message instanceof PGPLiteralData literalData) {
 		    //Message is just encrypted
-		    processLiteralData((PGPLiteralData) message, out, null);
-		} else if (message instanceof PGPOnePassSignatureList) {
+		    processLiteralData(literalData, out, null);
+		} else if (message instanceof PGPOnePassSignatureList onePassSigList) {
 
 			if(!isCompressed){
-	        	sigLiteralData = plainFact.nextObject();
-	        }
+		       	sigLiteralData = plainFact.nextObject();
+		       }
 
 		    //Message is signed and encrypted with OnePassSignature
 		    decryptionRes.setIsSigned(true);
 
-		    PGPSignatureWrapper sigWrap = new PGPSignatureWrapper(((PGPOnePassSignatureList) message).get(0));
+		    PGPSignatureWrapper sigWrap = new PGPSignatureWrapper(onePassSigList.get(0));
 
 		    PGPPublicKey pubKey = pgpKeyRing.getPublicKeyByID(sigWrap.getKeyID());
 		    
@@ -280,18 +278,18 @@ public class PGPDecrypter {
 		        }
 		        decryptionRes.setIsSignatureValid(sigWrap.verify(sigList.get(0)));
 		    }
-		} else if (message instanceof PGPSignatureList) {
+		} else if (message instanceof PGPSignatureList messageSignatureList) {
 
 			if(isCompressed){
 				sigLiteralData = (PGPLiteralData) pgpFact.nextObject();
-	        } else {
-	        	sigLiteralData = (PGPLiteralData) plainFact.nextObject();
-	        }
+		       } else {
+		       	sigLiteralData = (PGPLiteralData) plainFact.nextObject();
+		       }
 
 		    //Message is signed and encrypted
 		    decryptionRes.setIsSigned(true);
 
-		    PGPSignatureWrapper sigWrap = new PGPSignatureWrapper(((PGPSignatureList) message).get(0));
+		    PGPSignatureWrapper sigWrap = new PGPSignatureWrapper(messageSignatureList.get(0));
 
 		    PGPPublicKey pubKey = pgpKeyRing.getPublicKeyByID(sigWrap.getKeyID());
 		    
