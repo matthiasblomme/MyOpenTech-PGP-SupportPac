@@ -6,13 +6,42 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Initializes PGP Security Environment.
- * @version 1.0
- * @author Dipak K Pal (IBM)
- * <br><br>
- * <b>Description:</b>
- * Initializes PGP Security Environment.
+ * Manages the PGP security environment including key repositories and default algorithm settings.
  *
+ * <p>This class provides a centralized configuration and management system for PGP operations.
+ * It maintains a registry of key repositories and provides access to default encryption,
+ * hashing, and compression algorithms.</p>
+ *
+ * <p><b>Key Features:</b></p>
+ * <ul>
+ *   <li>Initialize and manage multiple PGP key repositories</li>
+ *   <li>Configure default encryption algorithms (CAST5, AES, etc.)</li>
+ *   <li>Configure default hash algorithms (SHA1, SHA256, etc.)</li>
+ *   <li>Configure default compression algorithms (ZIP, ZLIB, BZIP2)</li>
+ *   <li>Thread-safe repository management</li>
+ * </ul>
+ *
+ * <p><b>Example Usage:</b></p>
+ * <pre>{@code
+ * // Initialize a key repository
+ * PGPEnvironment.initialize(
+ *     "myRepo",
+ *     "/path/to/secring.gpg",
+ *     "/path/to/pubring.gpg",
+ *     false
+ * );
+ *
+ * // Set as default repository
+ * PGPEnvironment.setDefaultKeyRepository("myRepo");
+ *
+ * // Get default algorithms
+ * String hashAlg = PGPEnvironment.getDefaultHashAlgorithm();  // "SHA1"
+ * String cipherAlg = PGPEnvironment.getDefaultCipherAlgorithm();  // "CAST5"
+ * }</pre>
+ *
+ * @version 2.0.1.0
+ * @author Dipak K Pal (IBM)
+ * @since 1.0
  */
 public class PGPEnvironment {
 
@@ -31,12 +60,16 @@ public class PGPEnvironment {
 	private static final Object lock = new Object();
 	
 	/**
-	 * Initialize PGP Security environment
-	 * @param pgpRepositoryName: PGP key repository name
-	 * @param pgpPrivateKeyRepository: PGP private key repository file name
-	 * @param pgpPublicKeyRepository: PGP public key repository file name
-	 * @param overwrite: If key repository already initiated, overwrite with new repository files if value is true
-	 * @throws PGPException
+	 * Initializes a PGP key repository with the specified private and public key files.
+	 *
+	 * <p>This method registers a new key repository in the environment. If a repository with
+	 * the same name already exists, it will only be overwritten if the overwrite parameter is true.</p>
+	 *
+	 * @param pgpRepositoryName the unique name for this key repository
+	 * @param pgpPrivateKeyRepository the file path to the private key ring (secring.gpg)
+	 * @param pgpPublicKeyRepository the file path to the public key ring (pubring.gpg)
+	 * @param overwrite if true, overwrites an existing repository with the same name; if false, keeps the existing one
+	 * @throws PGPException if initialization fails or key files cannot be loaded
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void initialize(String pgpRepositoryName, String pgpPrivateKeyRepository, 
@@ -101,8 +134,13 @@ public class PGPEnvironment {
 	}
 	
 	/**
-	 * Return default PGP Keyring
-	 * @return PGPKeyRing
+	 * Retrieves the default PGP key ring.
+	 *
+	 * <p>Returns the key ring associated with the default repository. The default repository
+	 * must be set using {@link #setDefaultKeyRepository(String)} before calling this method.</p>
+	 *
+	 * @return the default PGP key ring containing public and private keys
+	 * @throws PGPException if the default repository is not initialized or cannot be found
 	 */
 	public static PGPKeyRing getDefaultPGPKeyRing() throws PGPException {
 		PGPKeyRing pgpKeyring = null;
@@ -115,10 +153,14 @@ public class PGPEnvironment {
 	}
 	
 	/**
-	 * Get PGP Keyring
-	 * @param pgpRepositoryName
-	 * @return PGPKeyRing
-	 * @throws PGPException
+	 * Retrieves a specific PGP key ring by repository name.
+	 *
+	 * <p>Returns the key ring associated with the specified repository. The repository
+	 * must be initialized using {@link #initialize} before calling this method.</p>
+	 *
+	 * @param pgpRepositoryName the name of the key repository to retrieve
+	 * @return the PGP key ring containing public and private keys
+	 * @throws PGPException if the repository is not initialized or cannot be found
 	 */
 	public static PGPKeyRing getPGPKeyRing(String pgpRepositoryName) throws PGPException {
 		PGPKeyRing pgpKeyring = null;
@@ -163,9 +205,13 @@ public class PGPEnvironment {
 	}
 	
 	/**
-	 * Set default PGP Key Repository. Make sure Key Repository is initialized
-	 * @param defaultKeyRepository
-	 * @throws PGPException
+	 * Sets the default PGP key repository.
+	 *
+	 * <p>Designates a specific repository as the default for PGP operations. The repository
+	 * must already be initialized before it can be set as the default.</p>
+	 *
+	 * @param defaultKeyRepository the name of the repository to set as default
+	 * @throws PGPException if the specified repository is not initialized or cannot be found
 	 */
 	public static void setDefaultKeyRepository(String defaultKeyRepository) throws PGPException {
 		try {
